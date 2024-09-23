@@ -110,6 +110,7 @@ fun PrimaryTextField(
                 text = it,
                 color = MaterialTheme.colorScheme.error,
                 modifier = Modifier.padding(start = 16.dp),
+                style = MaterialTheme.typography.labelMedium
             )
         }
     }
@@ -124,6 +125,20 @@ private fun PrimaryTextFieldPreview() {
             {},
             leadingIcon = R.drawable.ic_envelope,
             keyboardType = KeyboardType.Password
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PrimaryTextFieldErrorPreview() {
+    LucheDroidChatTheme {
+        PrimaryTextField(
+            "auau",
+            {},
+            leadingIcon = R.drawable.ic_envelope,
+            keyboardType = KeyboardType.Password,
+            errorMessage = "Email invalido"
         )
     }
 }

@@ -12,10 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -74,7 +70,10 @@ fun SignInScreen(
             modifier = Modifier
                 .padding(horizontal = dimensionResource(R.dimen.spacing_medium)),
             leadingIcon = R.drawable.ic_envelope,
-            keyboardType = KeyboardType.Email
+            keyboardType = KeyboardType.Email,
+            errorMessage = formState.emailError?.let {
+                stringResource(id = it)
+            }
         )
 
         Spacer(modifier = Modifier.height(14.dp))
@@ -89,7 +88,10 @@ fun SignInScreen(
             placeholder = stringResource(id = R.string.feature_login_password),
             keyboardType = KeyboardType.Password,
             leadingIcon = R.drawable.ic_lock,
-            imeAction = ImeAction.Done
+            imeAction = ImeAction.Done,
+            errorMessage = formState.passwordError?.let {
+                stringResource(id = it)
+            }
         )
 
         Spacer(modifier = Modifier.height(98.dp))
