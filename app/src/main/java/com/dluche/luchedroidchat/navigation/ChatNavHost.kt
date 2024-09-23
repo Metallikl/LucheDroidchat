@@ -1,5 +1,7 @@
 package com.dluche.luchedroidchat.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -41,14 +43,28 @@ fun ChatNavHost() {
                 }
             )
         }
-        composable<SignInRoute> {
+        composable<SignInRoute>(
+            enterTransition = {
+                slideInTo(AnimatedContentTransitionScope.SlideDirection.Right)
+            },
+            exitTransition = {
+                slideOutTo(AnimatedContentTransitionScope.SlideDirection.Left)
+            }
+        ) {
             SignInRoute(
                 navigateToSignUp = {
                     navController.navigate(SignUpRoute)
                 }
             )
         }
-        composable<SignUpRoute> {
+        composable<SignUpRoute>(
+            enterTransition = {
+                slideInTo(AnimatedContentTransitionScope.SlideDirection.Left)
+            },
+            exitTransition = {
+                slideOutTo(AnimatedContentTransitionScope.SlideDirection.Left)
+            }
+        ) {
 
         }
     }
