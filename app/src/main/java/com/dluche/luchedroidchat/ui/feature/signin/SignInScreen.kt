@@ -25,6 +25,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.dluche.luchedroidchat.R
 import com.dluche.luchedroidchat.ui.components.PrimaryButton
 import com.dluche.luchedroidchat.ui.components.PrimaryTextField
@@ -32,12 +33,21 @@ import com.dluche.luchedroidchat.ui.theme.BackgroundGradient
 import com.dluche.luchedroidchat.ui.theme.LucheDroidChatTheme
 
 @Composable
-fun SignInRoute() {
-    SignInScreen()
+fun SignInRoute(
+    viewModel: SignInViewModel = viewModel()
+) {
+    val formState = viewModel.formState
+    SignInScreen(
+        formState = formState,
+        onFormEvent = viewModel::onFormEvent
+    )
 }
 
 @Composable
-fun SignInScreen() {
+fun SignInScreen(
+    formState: SignInFormState,
+    onFormEvent: (SignInFormEvent) -> Unit
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -55,17 +65,10 @@ fun SignInScreen() {
 
         Spacer(modifier = Modifier.height(78.dp))
 
-        var email by remember {
-            mutableStateOf("")
-        }
-        var passowrd by remember {
-            mutableStateOf("")
-        }
-
         PrimaryTextField(
-            value = email,
-            onValueChange = {
-                email = it
+            value = formState.email,
+            onValueChange = { email ->
+                onFormEvent(SignInFormEvent.EmailChanged(email))
             },
             placeholder = stringResource(id = R.string.feature_login_email),
             modifier = Modifier
@@ -77,9 +80,9 @@ fun SignInScreen() {
         Spacer(modifier = Modifier.height(14.dp))
 
         PrimaryTextField(
-            value = passowrd,
-            onValueChange = {
-                passowrd = it
+            value = formState.password,
+            onValueChange = { pwd ->
+                onFormEvent(SignInFormEvent.PasswordChanged(pwd))
             },
             modifier = Modifier
                 .padding(horizontal = dimensionResource(R.dimen.spacing_medium)),
@@ -91,15 +94,13 @@ fun SignInScreen() {
 
         Spacer(modifier = Modifier.height(98.dp))
 
-        var isLoading by remember {
-            mutableStateOf(false)
-        }
-
         PrimaryButton(
             text = stringResource(id = R.string.feature_login_button),
-            onClick = { isLoading = !isLoading },
+            onClick = {
+                onFormEvent(SignInFormEvent.Submit)
+            },
             modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.spacing_medium)),
-            isLoading = isLoading
+            isLoading = formState.isLoading
         )
     }
 }
@@ -108,7 +109,10 @@ fun SignInScreen() {
 @Composable
 private fun SignInScreenPreview() {
     LucheDroidChatTheme {
-        SignInScreen()
+        SignInScreen(
+            formState = SignInFormState(),
+            onFormEvent = {}
+        )
     }
 
 }
