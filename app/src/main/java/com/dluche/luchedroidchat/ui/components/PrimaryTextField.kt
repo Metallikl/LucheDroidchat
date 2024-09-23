@@ -26,7 +26,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dluche.luchedroidchat.R
-import com.dluche.luchedroidchat.ui.theme.ColorError
 import com.dluche.luchedroidchat.ui.theme.LucheDroidChatTheme
 
 @Composable
