@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -30,6 +31,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dluche.luchedroidchat.R
+import com.dluche.luchedroidchat.ui.extention.bottomBorder
 import com.dluche.luchedroidchat.ui.extention.getVisualTransformationForPassword
 import com.dluche.luchedroidchat.ui.theme.ColorSuccess
 import com.dluche.luchedroidchat.ui.theme.LucheDroidChatTheme
@@ -74,6 +76,8 @@ fun SecondaryTextField(
         ) {
             Row(
                 verticalAlignment = CenterVertically,
+                modifier = Modifier
+                    .bottomBorder(Color.Blue, 2.dp)
             ) {
                 Column(
                     modifier = Modifier.fillMaxWidth().weight(1f)
