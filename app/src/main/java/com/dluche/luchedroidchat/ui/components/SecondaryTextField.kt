@@ -32,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dluche.luchedroidchat.R
 import com.dluche.luchedroidchat.ui.extention.bottomBorder
+import com.dluche.luchedroidchat.ui.extention.bottomBorder2
 import com.dluche.luchedroidchat.ui.extention.getVisualTransformationForPassword
 import com.dluche.luchedroidchat.ui.theme.ColorSuccess
 import com.dluche.luchedroidchat.ui.theme.LucheDroidChatTheme
@@ -77,7 +78,7 @@ fun SecondaryTextField(
             Row(
                 verticalAlignment = CenterVertically,
                 modifier = Modifier
-                    .bottomBorder(Color.Blue, 2.dp)
+                    .bottomBorder2(Color.Blue, 2.dp)
             ) {
                 Column(
                     modifier = Modifier.fillMaxWidth().weight(1f)
