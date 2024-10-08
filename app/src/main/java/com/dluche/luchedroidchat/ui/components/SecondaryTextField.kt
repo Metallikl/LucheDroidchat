@@ -27,6 +27,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dluche.luchedroidchat.R
+import com.dluche.luchedroidchat.ui.extention.bottomBorder
 import com.dluche.luchedroidchat.ui.extention.bottomBorder2
 import com.dluche.luchedroidchat.ui.extention.getVisualTransformationForPassword
 import com.dluche.luchedroidchat.ui.theme.ColorSuccess
@@ -72,7 +73,7 @@ fun SecondaryTextField(
             Row(
                 verticalAlignment = CenterVertically,
                 modifier = Modifier
-                    .bottomBorder2(MaterialTheme.colorScheme.onSurfaceVariant, 1.dp)
+                    .bottomBorder(MaterialTheme.colorScheme.onSurfaceVariant, 1.dp)
             ) {
                 Column(
                     modifier = Modifier
