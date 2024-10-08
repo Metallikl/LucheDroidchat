@@ -41,13 +41,22 @@ import com.dluche.luchedroidchat.ui.theme.LucheDroidChatTheme
 import kotlinx.coroutines.launch
 
 @Composable
-fun SignUpRoute() {
-    SignUpRouteScreen()
+fun SignUpRoute(
+    viewModel: SignUpFormViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+) {
+    val formState = viewModel.formState
+    SignUpScreen(
+        formState = formState,
+        onFormEvent = viewModel::onFormEvent
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignUpRouteScreen() {
+fun SignUpScreen(
+    formState: SignUpFormState,
+    onFormEvent: (SignUpFormEvent) -> Unit
+) {
     //fillMaxSize() com verticalScroll, não funciona corretamente, nesses casos, adcionar um box acima
     //adicionando as proprieades de verticalScroll, background etc no box e o fillMaxSize() no Column
     Box(
@@ -60,13 +69,6 @@ fun SignUpRouteScreen() {
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            var profilePictureSelectedUri by remember {
-                mutableStateOf<Uri?>(null)
-            }
-
-            var openProfilePictureOptionModalBottomSheet by remember {
-                mutableStateOf(false)
-            }
 
             Spacer(modifier = Modifier.height(56.dp))
 
@@ -95,9 +97,9 @@ fun SignUpRouteScreen() {
                 ) {
 
                     ProfilePictureSelector(
-                        imageUri = profilePictureSelectedUri,
+                        imageUri = formState.profilePictureUri,
                         modifier = Modifier.clickable {
-                            openProfilePictureOptionModalBottomSheet = true
+                            onFormEvent(SignUpFormEvent.OpenProfilePictureModalBottomSheet)
                         }
                     )
 
@@ -105,16 +107,21 @@ fun SignUpRouteScreen() {
 
                     SecondaryTextField(
                         label = stringResource(id = R.string.feature_sign_up_first_name),
-                        value = "",
-                        onValueChange = {}
+                        value = formState.firstName,
+                        onValueChange = {
+                            onFormEvent(SignUpFormEvent.FirstNameChanged(it))
+                        }
                     )
 
                     Spacer(modifier = Modifier.height(22.dp))
 
                     SecondaryTextField(
                         label = stringResource(id = R.string.feature_sign_up_last_name),
-                        value = "",
-                        onValueChange = {}
+                        value = formState.lastName,
+                        onValueChange = {
+                            onFormEvent(SignUpFormEvent.LastNameChanged(it))
+
+                        }
                     )
 
                     Spacer(modifier = Modifier.height(22.dp))
@@ -122,8 +129,11 @@ fun SignUpRouteScreen() {
 
                     SecondaryTextField(
                         label = stringResource(id = R.string.feature_sign_up_email),
-                        value = "",
-                        onValueChange = {},
+                        value = formState.email,
+                        onValueChange = {
+                            onFormEvent(SignUpFormEvent.EmailChanged(it))
+
+                        },
                         keyboardType = KeyboardType.Email
                     )
 
@@ -132,18 +142,22 @@ fun SignUpRouteScreen() {
 
                     SecondaryTextField(
                         label = stringResource(id = R.string.feature_sign_up_password),
-                        value = "",
-                        onValueChange = {},
+                        value = formState.password,
+                        onValueChange = {
+                            onFormEvent(SignUpFormEvent.PasswordChanged(it))
+                        },
                         keyboardType = KeyboardType.Password
                     )
 
                     Spacer(modifier = Modifier.height(22.dp))
 
-
                     SecondaryTextField(
                         label = stringResource(id = R.string.feature_sign_up_password_confirmation),
-                        value = "",
-                        onValueChange = {},
+                        value = formState.passwordConfirmation,
+                        onValueChange = {
+                            onFormEvent(SignUpFormEvent.PasswordConfirmationChanged(it))
+
+                        },
                         keyboardType = KeyboardType.Password,
                         imeAction = ImeAction.Done
                     )
@@ -159,19 +173,22 @@ fun SignUpRouteScreen() {
 
             val sheetState = rememberModalBottomSheetState()
             val scope = rememberCoroutineScope() //criar scopo coroutine para fechar a sheet
-            if (openProfilePictureOptionModalBottomSheet) {
+            if (formState.isProfilePictureModalBottomSheetOpen) {
                 ProfilePictureOptionsModalBottomSheet(
-                    onPictureSelected = { uri->
-                        profilePictureSelectedUri = uri
+                    onPictureSelected = { uri ->
+                        onFormEvent(SignUpFormEvent.ProfilePictureChanged(uri))
                         scope.launch {
                             sheetState.hide()
                         }.invokeOnCompletion { //ao completar o job, atualiza o estado da modal
                             if (!sheetState.isVisible) {
-                                openProfilePictureOptionModalBottomSheet = false
+                                onFormEvent(SignUpFormEvent.CloseProfilePictureModalBottomSheet)
                             }
                         }
                     },
-                    onDismissRequest = { openProfilePictureOptionModalBottomSheet = false }
+                    onDismissRequest = {
+                        onFormEvent(SignUpFormEvent.CloseProfilePictureModalBottomSheet)
+                    },
+                    sheetState = sheetState
                 )
             }
         }
@@ -181,8 +198,11 @@ fun SignUpRouteScreen() {
 
 @Preview
 @Composable
-private fun SignUpRouteScreenPreview() {
+private fun SignUpScreenPreview() {
     LucheDroidChatTheme {
-        SignUpRouteScreen()
+        SignUpScreen(
+            formState = SignUpFormState(),
+            onFormEvent = {}
+        )
     }
 }
