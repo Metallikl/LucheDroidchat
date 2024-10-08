@@ -134,15 +134,6 @@ fun SignUpScreen(
 
                     Spacer(modifier = Modifier.height(22.dp))
 
-                    val extraTextStringResource =
-                        //Assim como LauchedEffect, a api remember aceita keys para evitar recomposição
-                        remember(formState.password, formState.passwordConfirmation) {
-                            if (formState.password.isNotEmpty() && formState.password == formState.passwordConfirmation
-                            ) {
-                                R.string.feature_sign_up_passwords_match
-                            } else null
-                        }
-
                     SecondaryTextField(
                         label = stringResource(id = R.string.feature_sign_up_password),
                         value = formState.password,
@@ -150,7 +141,7 @@ fun SignUpScreen(
                             onFormEvent(SignUpFormEvent.PasswordChanged(it))
                         },
                         keyboardType = KeyboardType.Password,
-                        extraText = extraTextStringResource?.let { stringResource(id = it) }
+                        extraText = formState.passwordExtraText?.let { stringResource(id = it) }
                     )
 
                     Spacer(modifier = Modifier.height(22.dp))
@@ -164,7 +155,7 @@ fun SignUpScreen(
                         },
                         keyboardType = KeyboardType.Password,
                         imeAction = ImeAction.Done,
-                        extraText = extraTextStringResource?.let { stringResource(id = it) }
+                        extraText = formState.passwordExtraText?.let { stringResource(id = it) }
                     )
 
                     Spacer(modifier = Modifier.height(36.dp))
