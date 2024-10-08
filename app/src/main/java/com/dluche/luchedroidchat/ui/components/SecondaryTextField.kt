@@ -1,6 +1,5 @@
 package com.dluche.luchedroidchat.ui.components
 
-import androidx.compose.foundation.content.MediaType.Companion.Text
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,23 +19,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dluche.luchedroidchat.R
-import com.dluche.luchedroidchat.ui.extention.bottomBorder
 import com.dluche.luchedroidchat.ui.extention.bottomBorder2
 import com.dluche.luchedroidchat.ui.extention.getVisualTransformationForPassword
 import com.dluche.luchedroidchat.ui.theme.ColorSuccess
 import com.dluche.luchedroidchat.ui.theme.LucheDroidChatTheme
-import io.ktor.client.plugins.convertLongTimeoutToIntWithInfiniteAsZero
 
 @Composable
 fun SecondaryTextField(
@@ -78,10 +72,12 @@ fun SecondaryTextField(
             Row(
                 verticalAlignment = CenterVertically,
                 modifier = Modifier
-                    .bottomBorder2(Color.Blue, 2.dp)
+                    .bottomBorder2(MaterialTheme.colorScheme.onSurfaceVariant, 1.dp)
             ) {
                 Column(
-                    modifier = Modifier.fillMaxWidth().weight(1f)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
                 ) {
                     Text(
                         text = label,
@@ -98,7 +94,7 @@ fun SecondaryTextField(
                         }
                         extraText?.let {
                             Text(
-                                text = "extraText",
+                                text = it,
                                 modifier = Modifier.padding(4.dp),
                                 color = ColorSuccess,
                                 fontWeight = FontWeight.Bold
@@ -109,7 +105,7 @@ fun SecondaryTextField(
 
                 }
 
-                if(keyboardType == KeyboardType.Password && inputText.isNotEmpty()){
+                if (keyboardType == KeyboardType.Password && inputText.isNotEmpty()) {
                     val visibilityIcon = if (pwdVisible) {
                         R.drawable.ic_visibility
                     } else {
@@ -117,7 +113,7 @@ fun SecondaryTextField(
                     }
                     IconButton(
                         onClick = {
-                        pwdVisible = !pwdVisible
+                            pwdVisible = !pwdVisible
                         }
                     ) {
                         Icon(
@@ -137,8 +133,8 @@ fun SecondaryTextField(
 private fun SecondaryTextFieldPreview() {
     LucheDroidChatTheme {
         SecondaryTextField(
-            label = "Texto",
-            value = "",
+            label = "E-mail",
+            value = "Email",
             onValueChange = {},
             extraText = "Extra text",
             keyboardType = KeyboardType.Email
@@ -151,8 +147,8 @@ private fun SecondaryTextFieldPreview() {
 private fun SecondaryTextFieldPasswordPreview() {
     LucheDroidChatTheme {
         SecondaryTextField(
-            label = "Texto",
-            value = "",
+            label = "Password",
+            value = "Password",
             onValueChange = {},
             extraText = "Passowrd matches text",
             keyboardType = KeyboardType.Password
