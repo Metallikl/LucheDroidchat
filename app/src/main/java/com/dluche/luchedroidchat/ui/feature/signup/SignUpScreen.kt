@@ -2,9 +2,8 @@ package com.dluche.luchedroidchat.ui.feature.signup
 
 import android.net.Uri
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.rememberScrollableState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dluche.luchedroidchat.R
 import com.dluche.luchedroidchat.ui.components.PrimaryButton
+import com.dluche.luchedroidchat.ui.components.ProfilePictureOptionsModalBottomSheet
 import com.dluche.luchedroidchat.ui.components.ProfilePictureSelector
 import com.dluche.luchedroidchat.ui.components.SecondaryTextField
 import com.dluche.luchedroidchat.ui.theme.BackgroundGradient
@@ -41,6 +42,7 @@ fun SignUpRoute() {
     SignUpRouteScreen()
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpRouteScreen() {
     //fillMaxSize() com verticalScroll, não funciona corretamente, nesses casos, adcionar um box acima
@@ -57,6 +59,10 @@ fun SignUpRouteScreen() {
         ) {
             var profilePictureSelectedUri by remember {
                 mutableStateOf<Uri?>(null)
+            }
+
+            var openProfilePictureOptionModalBottomSheet by remember {
+                mutableStateOf(false)
             }
 
             Spacer(modifier = Modifier.height(56.dp))
@@ -86,7 +92,10 @@ fun SignUpRouteScreen() {
                 ) {
 
                     ProfilePictureSelector(
-                        imageUri = profilePictureSelectedUri
+                        imageUri = profilePictureSelectedUri,
+                        modifier = Modifier.clickable {
+                            openProfilePictureOptionModalBottomSheet = true
+                        }
                     )
 
                     Spacer(modifier = Modifier.height(30.dp))
@@ -142,9 +151,13 @@ fun SignUpRouteScreen() {
                         text = stringResource(id = R.string.feature_sign_up_button),
                         onClick = {}
                     )
-
-
                 }
+            }
+
+            if (openProfilePictureOptionModalBottomSheet) {
+                ProfilePictureOptionsModalBottomSheet(
+                    onDismissRequest = { openProfilePictureOptionModalBottomSheet = false }
+                )
             }
         }
     }
