@@ -1,5 +1,7 @@
 package com.dluche.luchedroidchat.ui.components
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -41,62 +43,56 @@ fun ProfilePictureOptionsModalBottomSheet(
         containerColor = MaterialTheme.colorScheme.surface,
         contentColor = MaterialTheme.colorScheme.onSurface
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .defaultMinSize(minHeight = 48.dp)
-                .clickable {
 
-                }
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                painter = painterResource(
-                    id = R.drawable.ic_photo_camera
-                ),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurface,
-            )
+        ProfilePictureOptionRow(
+            R.drawable.ic_photo_camera,
+            R.string.common_take_photo,
+            onClick = {}
+        )
 
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Text(
-                text = stringResource(id = R.string.common_take_photo),
-                color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.bodyLarge,
-            )
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .defaultMinSize(minHeight = 48.dp)
-                .clickable {
-
-                }
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                painter = painterResource(
-                    id = R.drawable.ic_photo_library
-                ),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurface,
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Text(
-                text = stringResource(id = R.string.common_upload_photo),
-                color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.bodyLarge,
-            )
-        }
-
+        ProfilePictureOptionRow(
+            R.drawable.ic_photo_library,
+            R.string.common_upload_photo,
+            onClick = {}
+        )
     }
+}
 
+@Composable
+private fun ProfilePictureOptionRow(
+    @DrawableRes
+    iconResId: Int,
+    @StringRes
+    textStringId: Int,
+    onClick: () -> Unit
+
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .defaultMinSize(minHeight = 48.dp)
+            .clickable {
+                onClick()
+            }
+            .padding(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painter = painterResource(
+                id = iconResId
+            ),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurface,
+        )
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Text(
+            text = stringResource(id = textStringId),
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.bodyLarge,
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
