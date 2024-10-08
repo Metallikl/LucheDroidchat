@@ -16,10 +16,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,6 +38,7 @@ import com.dluche.luchedroidchat.ui.components.ProfilePictureSelector
 import com.dluche.luchedroidchat.ui.components.SecondaryTextField
 import com.dluche.luchedroidchat.ui.theme.BackgroundGradient
 import com.dluche.luchedroidchat.ui.theme.LucheDroidChatTheme
+import kotlinx.coroutines.launch
 
 @Composable
 fun SignUpRoute() {
@@ -154,8 +157,20 @@ fun SignUpRouteScreen() {
                 }
             }
 
+            val sheetState = rememberModalBottomSheetState()
+            val scope = rememberCoroutineScope() //criar scopo coroutine para fechar a sheet
             if (openProfilePictureOptionModalBottomSheet) {
                 ProfilePictureOptionsModalBottomSheet(
+                    onPictureSelected = { uri->
+                        profilePictureSelectedUri = uri
+                        scope.launch {
+                            sheetState.hide()
+                        }.invokeOnCompletion { //ao completar o job, atualiza o estado da modal
+                            if (!sheetState.isVisible) {
+                                openProfilePictureOptionModalBottomSheet = false
+                            }
+                        }
+                    },
                     onDismissRequest = { openProfilePictureOptionModalBottomSheet = false }
                 )
             }

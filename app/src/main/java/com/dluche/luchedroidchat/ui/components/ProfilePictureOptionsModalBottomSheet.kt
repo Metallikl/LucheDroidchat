@@ -1,5 +1,8 @@
 package com.dluche.luchedroidchat.ui.components
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
@@ -32,10 +35,21 @@ import com.dluche.luchedroidchat.ui.theme.LucheDroidChatTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfilePictureOptionsModalBottomSheet(
+    onPictureSelected: (uri:Uri) -> Unit,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberModalBottomSheetState(),
 ) {
+
+    val imagePicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri ->
+            uri?.let{
+                onPictureSelected(it)
+            }
+        }
+    )
+
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         modifier = modifier,
@@ -47,13 +61,17 @@ fun ProfilePictureOptionsModalBottomSheet(
         ProfilePictureOptionRow(
             R.drawable.ic_photo_camera,
             R.string.common_take_photo,
-            onClick = {}
+            onClick = {
+
+            }
         )
 
         ProfilePictureOptionRow(
             R.drawable.ic_photo_library,
             R.string.common_upload_photo,
-            onClick = {}
+            onClick = {
+                imagePicker.launch("image/*")
+            }
         )
     }
 }
@@ -107,6 +125,7 @@ private fun ProfilePictureOptionsModalBottomSheetPreview() {
     )
     LucheDroidChatTheme {
         ProfilePictureOptionsModalBottomSheet(
+            onPictureSelected = {},
             onDismissRequest = {},
             sheetState = sheetState
         )
