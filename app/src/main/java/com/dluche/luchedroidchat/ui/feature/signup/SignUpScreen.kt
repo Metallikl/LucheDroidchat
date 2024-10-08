@@ -1,5 +1,6 @@
 package com.dluche.luchedroidchat.ui.feature.signup
 
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -16,6 +17,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -26,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dluche.luchedroidchat.R
 import com.dluche.luchedroidchat.ui.components.PrimaryButton
+import com.dluche.luchedroidchat.ui.components.ProfilePictureSelector
 import com.dluche.luchedroidchat.ui.components.SecondaryTextField
 import com.dluche.luchedroidchat.ui.theme.BackgroundGradient
 import com.dluche.luchedroidchat.ui.theme.LucheDroidChatTheme
@@ -49,6 +55,10 @@ fun SignUpRouteScreen() {
             modifier = Modifier
                 .fillMaxSize()
         ) {
+            var profilePictureSelectedUri by remember {
+                mutableStateOf<Uri?>(null)
+            }
+
             Spacer(modifier = Modifier.height(56.dp))
 
             Image(
@@ -72,7 +82,14 @@ fun SignUpRouteScreen() {
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+
+                    ProfilePictureSelector(
+                        imageUri = profilePictureSelectedUri
+                    )
+
+                    Spacer(modifier = Modifier.height(30.dp))
 
                     SecondaryTextField(
                         label = stringResource(id = R.string.feature_sign_up_first_name),
@@ -81,7 +98,6 @@ fun SignUpRouteScreen() {
                     )
 
                     Spacer(modifier = Modifier.height(22.dp))
-
 
                     SecondaryTextField(
                         label = stringResource(id = R.string.feature_sign_up_last_name),
