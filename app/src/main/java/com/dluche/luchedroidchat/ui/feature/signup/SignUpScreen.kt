@@ -1,6 +1,5 @@
 package com.dluche.luchedroidchat.ui.feature.signup
 
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,11 +17,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -126,7 +122,6 @@ fun SignUpScreen(
 
                     Spacer(modifier = Modifier.height(22.dp))
 
-
                     SecondaryTextField(
                         label = stringResource(id = R.string.feature_sign_up_email),
                         value = formState.email,
@@ -139,6 +134,14 @@ fun SignUpScreen(
 
                     Spacer(modifier = Modifier.height(22.dp))
 
+                    val extraTextStringResource =
+                        //Assim como LauchedEffect, a api remember aceita keys para evitar recomposição
+                        remember(formState.password, formState.passwordConfirmation) {
+                            if (formState.password.isNotEmpty() && formState.password == formState.passwordConfirmation
+                            ) {
+                                R.string.feature_sign_up_passwords_match
+                            } else null
+                        }
 
                     SecondaryTextField(
                         label = stringResource(id = R.string.feature_sign_up_password),
@@ -146,7 +149,8 @@ fun SignUpScreen(
                         onValueChange = {
                             onFormEvent(SignUpFormEvent.PasswordChanged(it))
                         },
-                        keyboardType = KeyboardType.Password
+                        keyboardType = KeyboardType.Password,
+                        extraText = extraTextStringResource?.let { stringResource(id = it) }
                     )
 
                     Spacer(modifier = Modifier.height(22.dp))
@@ -159,7 +163,8 @@ fun SignUpScreen(
 
                         },
                         keyboardType = KeyboardType.Password,
-                        imeAction = ImeAction.Done
+                        imeAction = ImeAction.Done,
+                        extraText = extraTextStringResource?.let { stringResource(id = it) }
                     )
 
                     Spacer(modifier = Modifier.height(36.dp))
