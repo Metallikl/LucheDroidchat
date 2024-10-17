@@ -5,8 +5,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.dluche.luchedroidchat.R
+import com.dluche.luchedroidchat.ui.validator.FormValidator
 
-class SignUpFormViewModel : ViewModel() {
+class SignUpViewModel(
+    private val formValidator: FormValidator<SignUpFormState>
+) : ViewModel() {
 
     var formState by mutableStateOf(SignUpFormState())
         private set
@@ -62,6 +65,8 @@ class SignUpFormViewModel : ViewModel() {
     }
 
     private fun isValidForm(): Boolean{
-        return false
+        return !formValidator.validate(formState).also { newState ->
+            formState = newState
+        }.hasError
     }
 }

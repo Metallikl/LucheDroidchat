@@ -17,7 +17,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,6 +26,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.dluche.luchedroidchat.R
 import com.dluche.luchedroidchat.ui.components.PrimaryButton
 import com.dluche.luchedroidchat.ui.components.ProfilePictureOptionsModalBottomSheet
@@ -38,7 +38,9 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SignUpRoute(
-    viewModel: SignUpFormViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    viewModel: SignUpViewModel = viewModel {
+        SignUpViewModel(SignUpFormValidator())
+    }
 ) {
     val formState = viewModel.formState
     SignUpScreen(
@@ -106,6 +108,12 @@ fun SignUpScreen(
                         value = formState.firstName,
                         onValueChange = {
                             onFormEvent(SignUpFormEvent.FirstNameChanged(it))
+                        },
+                        errorText = formState.firstNameError?.let {
+                            stringResource(
+                                id = it,
+                                stringResource(id = R.string.feature_sign_up_first_name)
+                            )
                         }
                     )
 
@@ -117,6 +125,12 @@ fun SignUpScreen(
                         onValueChange = {
                             onFormEvent(SignUpFormEvent.LastNameChanged(it))
 
+                        },
+                        errorText = formState.lastNameError?.let {
+                            stringResource(
+                                id = it,
+                                stringResource(id = R.string.feature_sign_up_last_name)
+                            )
                         }
                     )
 
@@ -129,7 +143,8 @@ fun SignUpScreen(
                             onFormEvent(SignUpFormEvent.EmailChanged(it))
 
                         },
-                        keyboardType = KeyboardType.Email
+                        keyboardType = KeyboardType.Email,
+                        errorText = formState.emailError?.let { stringResource(id = it) }
                     )
 
                     Spacer(modifier = Modifier.height(22.dp))
@@ -141,7 +156,8 @@ fun SignUpScreen(
                             onFormEvent(SignUpFormEvent.PasswordChanged(it))
                         },
                         keyboardType = KeyboardType.Password,
-                        extraText = formState.passwordExtraText?.let { stringResource(id = it) }
+                        extraText = formState.passwordExtraText?.let { stringResource(id = it) },
+                        errorText = formState.passwordError?.let { stringResource(id = it) }
                     )
 
                     Spacer(modifier = Modifier.height(22.dp))
@@ -155,14 +171,17 @@ fun SignUpScreen(
                         },
                         keyboardType = KeyboardType.Password,
                         imeAction = ImeAction.Done,
-                        extraText = formState.passwordExtraText?.let { stringResource(id = it) }
+                        extraText = formState.passwordExtraText?.let { stringResource(id = it) },
+                        errorText = formState.passwordConfirmationError?.let { stringResource(id = it) }
                     )
 
                     Spacer(modifier = Modifier.height(36.dp))
 
                     PrimaryButton(
                         text = stringResource(id = R.string.feature_sign_up_button),
-                        onClick = {}
+                        onClick = {
+                            onFormEvent(SignUpFormEvent.Submit)
+                        }
                     )
                 }
             }
