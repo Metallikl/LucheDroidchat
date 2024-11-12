@@ -30,6 +30,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.dluche.luchedroidchat.R
 import com.dluche.luchedroidchat.ui.components.PrimaryButton
@@ -39,7 +40,7 @@ import com.dluche.luchedroidchat.ui.theme.LucheDroidChatTheme
 
 @Composable
 fun SignInRoute(
-    viewModel: SignInViewModel = viewModel(),
+    viewModel: SignInViewModel = hiltViewModel(),
     navigateToSignUp: () -> Unit
 ) {
     val formState = viewModel.formState

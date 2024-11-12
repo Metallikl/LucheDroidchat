@@ -25,7 +25,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object ApiModule {
-    const val BASE_URL = "https://chat-api.androidmoderno.com.br"
+    const val BASE_URL = "https://chat-api.androidmoderno.com.br/"
 
     @Provides
     @Singleton
