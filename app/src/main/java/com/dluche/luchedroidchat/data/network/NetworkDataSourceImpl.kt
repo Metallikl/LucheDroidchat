@@ -9,24 +9,27 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import javax.inject.Inject
 
-class NetworkDataSourceImpl @Inject constructor (
+class NetworkDataSourceImpl @Inject constructor(
     private val client: HttpClient
-): NetworkDataSource {
+) : NetworkDataSource {
     override suspend fun signUp(request: CreateAccountRequest) {
-        client.post(SIGN_UP_PATH) {
-            setBody(request)
-        }.body<Unit>()
+        handleNetworkException {
+            client.post(SIGN_UP_PATH) {
+                setBody(request)
+            }.body<Unit>()
+        }
     }
 
     override suspend fun signIn(request: AuthRequest): TokenResponse {
-        return client.post(SIGN_IN_PATH) {
-            setBody(request)
-        }.body()
+        return handleNetworkException {
+            client.post(SIGN_IN_PATH) {
+                setBody(request)
+            }.body()
+        }
     }
 
-    companion object{
+    companion object {
         const val SIGN_IN_PATH = "signin"
         const val SIGN_UP_PATH = "signup"
-
     }
 }
