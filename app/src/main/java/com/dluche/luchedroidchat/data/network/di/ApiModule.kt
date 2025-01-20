@@ -1,24 +1,25 @@
 package com.dluche.luchedroidchat.data.network.di
 
-import androidx.compose.ui.unit.max
+import com.dluche.luchedroidchat.model.NetworkException
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
-import io.ktor.client.engine.cio.endpoint
+import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.logging.SIMPLE
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-
 import javax.inject.Singleton
 
 
@@ -31,7 +32,8 @@ object ApiModule {
     @Singleton
     fun provideHttpClient(): HttpClient {
         return HttpClient(CIO) {
-            expectSuccess = true //melhora logs quando exception
+            //melhora logs quando exception indicando a criação das exception por faixa de status code
+            expectSuccess = true
 
             install(Logging) {
                 logger = Logger.SIMPLE
@@ -51,6 +53,17 @@ object ApiModule {
             defaultRequest {
                 url(BASE_URL)
                 contentType(ContentType.Application.Json)
+            }
+            //Adiciona tratativa de exception customizada a todas as resquest.
+            HttpResponseValidator {
+                handleResponseExceptionWithRequest { cause, _ ->
+                    throw if (cause is ClientRequestException) {
+                        val errorMessage = cause.response.bodyAsText()
+                        NetworkException.ApiException(errorMessage, cause.response.status.value)
+                    } else {
+                        NetworkException.UnknownNetworkException(cause)
+                    }
+                }
             }
         }
     }

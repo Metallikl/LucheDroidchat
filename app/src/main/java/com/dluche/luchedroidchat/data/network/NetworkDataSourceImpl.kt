@@ -13,19 +13,17 @@ class NetworkDataSourceImpl @Inject constructor(
     private val client: HttpClient
 ) : NetworkDataSource {
     override suspend fun signUp(request: CreateAccountRequest) {
-        handleNetworkException {
-            client.post(SIGN_UP_PATH) {
-                setBody(request)
-            }.body<Unit>()
-        }
+
+        client.post(SIGN_UP_PATH) {
+            setBody(request)
+        }.body<Unit>()
+
     }
 
     override suspend fun signIn(request: AuthRequest): TokenResponse {
-        return handleNetworkException {
-            client.post(SIGN_IN_PATH) {
-                setBody(request)
-            }.body()
-        }
+        return client.post(SIGN_IN_PATH) {
+            setBody(request)
+        }.body()
     }
 
     companion object {
