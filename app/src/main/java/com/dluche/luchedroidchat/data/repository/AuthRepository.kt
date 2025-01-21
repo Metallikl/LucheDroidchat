@@ -4,7 +4,7 @@ import com.dluche.luchedroidchat.model.CreateAccount
 
 interface AuthRepository {
 
-    suspend fun signUp(createAccount: CreateAccount)
+    suspend fun signUp(createAccount: CreateAccount): Result<Unit>
 
     suspend fun signIn(email: String, password: String)
 }

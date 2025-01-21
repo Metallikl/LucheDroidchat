@@ -78,19 +78,26 @@ class SignUpViewModel @Inject constructor(
         if (isValidForm()) {
             formState = formState.copy(isLoading = true)
             viewModelScope.launch {
-                try {
-                    authRepository.signUp(
-                        CreateAccount(
-                            username = formState.email,
-                            password = formState.password,
-                            firstName = formState.firstName,
-                            lastName = formState.lastName,
-                            profilePictureId = null
-                        )
+                authRepository.signUp(
+                    CreateAccount(
+                        username = formState.email,
+                        password = formState.password,
+                        firstName = formState.firstName,
+                        lastName = formState.lastName,
+                        profilePictureId = null
                     )
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
+                ).fold(
+                    onSuccess = {
+                        formState = formState.copy(
+                            isLoading = false,
+                        )
+                    },
+                    onFailure = {
+                        formState = formState.copy(
+                            isLoading = false,
+                        )
+                    }
+                )
             }
         }
     }

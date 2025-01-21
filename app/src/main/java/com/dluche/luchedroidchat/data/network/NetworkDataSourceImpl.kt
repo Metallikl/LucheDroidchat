@@ -13,7 +13,6 @@ class NetworkDataSourceImpl @Inject constructor(
     private val client: HttpClient
 ) : NetworkDataSource {
     override suspend fun signUp(request: CreateAccountRequest) {
-
         client.post(SIGN_UP_PATH) {
             setBody(request)
         }.body<Unit>()
