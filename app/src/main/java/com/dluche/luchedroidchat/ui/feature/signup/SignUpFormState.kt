@@ -19,4 +19,7 @@ data class SignUpFormState(
     val isProfilePictureModalBottomSheetOpen: Boolean = false,
     val hasError: Boolean = false,
     val isLoading: Boolean = false,
+    val isSignedUp: Boolean = false,
+    @StringRes
+    val apiErrorMessageResId: Int? = null,
 )

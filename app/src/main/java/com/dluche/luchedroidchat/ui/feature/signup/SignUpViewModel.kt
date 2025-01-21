@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.dluche.luchedroidchat.R
 import com.dluche.luchedroidchat.data.repository.AuthRepository
 import com.dluche.luchedroidchat.model.CreateAccount
+import com.dluche.luchedroidchat.model.NetworkException
 import com.dluche.luchedroidchat.ui.validator.FormValidator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -80,8 +81,8 @@ class SignUpViewModel @Inject constructor(
             viewModelScope.launch {
                 authRepository.signUp(
                     CreateAccount(
-                        username = formState.email,
-                        password = formState.password,
+                        username = "",
+                        password = "",
                         firstName = formState.firstName,
                         lastName = formState.lastName,
                         profilePictureId = null
@@ -90,11 +91,21 @@ class SignUpViewModel @Inject constructor(
                     onSuccess = {
                         formState = formState.copy(
                             isLoading = false,
+                            isSignedUp = true
                         )
                     },
                     onFailure = {
                         formState = formState.copy(
                             isLoading = false,
+                            apiErrorMessageResId = if (it is NetworkException.ApiException) {
+                                when(it.statusCode){
+                                    400 -> R.string.error_message_api_form_validation_failed
+                                    409 -> R.string.error_message_user_with_username_already_exists
+                                    else -> R.string.common_generic_error_title
+                                }
+                            } else  {
+                                R.string.common_generic_error_title
+                            }
                         )
                     }
                 )
