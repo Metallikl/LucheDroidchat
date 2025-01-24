@@ -62,6 +62,8 @@ class SignUpViewModel @Inject constructor(
             SignUpFormEvent.Submit -> {
                 doSignUp()
             }
+
+            SignUpFormEvent.DismissErrorDialog -> dismissErrorDialog()
         }
     }
 
@@ -117,5 +119,9 @@ class SignUpViewModel @Inject constructor(
         return !formValidator.validate(formState).also { newState ->
             formState = newState
         }.hasError
+    }
+
+    private fun dismissErrorDialog() {
+        formState = formState.copy( apiErrorMessageResId = null)
     }
 }

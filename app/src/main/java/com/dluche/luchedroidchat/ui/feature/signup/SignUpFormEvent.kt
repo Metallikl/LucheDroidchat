@@ -12,4 +12,5 @@ sealed interface SignUpFormEvent {
     data object OpenProfilePictureModalBottomSheet : SignUpFormEvent
     data object CloseProfilePictureModalBottomSheet : SignUpFormEvent
     data object Submit : SignUpFormEvent
+    data object DismissErrorDialog : SignUpFormEvent
 }

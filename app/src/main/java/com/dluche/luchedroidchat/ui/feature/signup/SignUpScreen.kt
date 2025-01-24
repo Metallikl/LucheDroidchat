@@ -49,12 +49,22 @@ fun SignUpRoute(
         onFormEvent = viewModel::onFormEvent
     )
 
-    formState.apiErrorMessageResId?.let {resId ->
+    ErrorDialog(formState, viewModel::onFormEvent)
+}
+
+@Composable
+private fun ErrorDialog(
+    formState: SignUpFormState,
+    onFormEvent: (SignUpFormEvent) -> Unit
+) {
+    formState.apiErrorMessageResId?.let { resId ->
         AlertDialog(
-            onDismissRequest = {},
+            onDismissRequest = {
+                onFormEvent(SignUpFormEvent.DismissErrorDialog)
+            },
             confirmButton = {
                 TextButton(onClick = {
-
+                    onFormEvent(SignUpFormEvent.DismissErrorDialog)
                 }) {
                     Text(
                         text = stringResource(id = R.string.common_ok)
