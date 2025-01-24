@@ -22,4 +22,5 @@ data class SignUpFormState(
     val isSignedUp: Boolean = false,
     @StringRes
     val apiErrorMessageResId: Int? = null,
+    val isCompressingImage: Boolean = false,
 )

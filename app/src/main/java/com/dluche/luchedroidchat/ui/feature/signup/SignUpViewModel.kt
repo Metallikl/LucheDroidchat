@@ -1,8 +1,11 @@
 package com.dluche.luchedroidchat.ui.feature.signup
 
+import android.content.Context
+import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dluche.luchedroidchat.R
@@ -10,14 +13,17 @@ import com.dluche.luchedroidchat.data.repository.AuthRepository
 import com.dluche.luchedroidchat.model.CreateAccount
 import com.dluche.luchedroidchat.model.NetworkException
 import com.dluche.luchedroidchat.ui.validator.FormValidator
+import com.dluche.luchedroidchat.util.image.ImageCompressor
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     private val formValidator: FormValidator<SignUpFormState>,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     var formState by mutableStateOf(SignUpFormState())
@@ -27,6 +33,9 @@ class SignUpViewModel @Inject constructor(
         when (event) {
             is SignUpFormEvent.ProfilePictureChanged -> {
                 formState = formState.copy(profilePictureUri = event.uri)
+                event.uri?.let {
+                    compressImageAndUpdateState(it)
+                }
             }
 
             is SignUpFormEvent.FirstNameChanged -> {
@@ -64,6 +73,20 @@ class SignUpViewModel @Inject constructor(
             }
 
             SignUpFormEvent.DismissErrorDialog -> dismissErrorDialog()
+        }
+    }
+
+    private fun compressImageAndUpdateState(uri: Uri){
+        viewModelScope.launch {
+            try {
+                formState = formState.copy(isCompressingImage = true)
+                val compressedFile = ImageCompressor.compressAndResizeImage(context, uri)
+                formState = formState.copy(profilePictureUri = compressedFile.toUri())
+            } catch (e: Exception) {
+
+            } finally {
+                formState = formState.copy(isCompressingImage = false)
+            }
         }
     }
 
