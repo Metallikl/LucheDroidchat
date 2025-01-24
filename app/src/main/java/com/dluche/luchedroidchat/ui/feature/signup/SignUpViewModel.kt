@@ -1,6 +1,5 @@
 package com.dluche.luchedroidchat.ui.feature.signup
 
-import android.content.Context
 import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -15,7 +14,6 @@ import com.dluche.luchedroidchat.model.NetworkException
 import com.dluche.luchedroidchat.ui.validator.FormValidator
 import com.dluche.luchedroidchat.util.image.ImageCompressor
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,7 +21,7 @@ import javax.inject.Inject
 class SignUpViewModel @Inject constructor(
     private val formValidator: FormValidator<SignUpFormState>,
     private val authRepository: AuthRepository,
-    @ApplicationContext private val context: Context
+    private val imageCompressor: ImageCompressor
 ) : ViewModel() {
 
     var formState by mutableStateOf(SignUpFormState())
@@ -76,11 +74,11 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
-    private fun compressImageAndUpdateState(uri: Uri){
+    private fun compressImageAndUpdateState(uri: Uri) {
         viewModelScope.launch {
             try {
                 formState = formState.copy(isCompressingImage = true)
-                val compressedFile = ImageCompressor.compressAndResizeImage(context, uri)
+                val compressedFile = imageCompressor.compressAndResizeImage(uri)
                 formState = formState.copy(profilePictureUri = compressedFile.toUri())
             } catch (e: Exception) {
 
@@ -123,12 +121,12 @@ class SignUpViewModel @Inject constructor(
                         formState = formState.copy(
                             isLoading = false,
                             apiErrorMessageResId = if (it is NetworkException.ApiException) {
-                                when(it.statusCode){
+                                when (it.statusCode) {
                                     400 -> R.string.error_message_api_form_validation_failed
                                     409 -> R.string.error_message_user_with_username_already_exists
                                     else -> R.string.common_generic_error_title
                                 }
-                            } else  {
+                            } else {
                                 R.string.common_generic_error_title
                             }
                         )
@@ -145,6 +143,6 @@ class SignUpViewModel @Inject constructor(
     }
 
     private fun dismissErrorDialog() {
-        formState = formState.copy( apiErrorMessageResId = null)
+        formState = formState.copy(apiErrorMessageResId = null)
     }
 }
