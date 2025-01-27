@@ -12,12 +12,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -31,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dluche.luchedroidchat.R
+import com.dluche.luchedroidchat.ui.components.AppDialog
 import com.dluche.luchedroidchat.ui.components.PrimaryButton
 import com.dluche.luchedroidchat.ui.components.ProfilePictureOptionsModalBottomSheet
 import com.dluche.luchedroidchat.ui.components.ProfilePictureSelector
@@ -41,7 +39,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SignUpRoute(
-    viewModel: SignUpViewModel = hiltViewModel()
+    viewModel: SignUpViewModel = hiltViewModel(),
+    onSignUpSuccess: () -> Unit
 ) {
     val formState = viewModel.formState
     SignUpScreen(
@@ -49,7 +48,24 @@ fun SignUpRoute(
         onFormEvent = viewModel::onFormEvent
     )
 
+    SuccessDialog(formState, onSignUpSuccess)
     ErrorDialog(formState, viewModel::onFormEvent)
+
+}
+
+@Composable
+fun SuccessDialog(formState: SignUpFormState, onSignUpSuccess: () -> Unit) {
+    if (formState.isSignedUp) {
+        AppDialog(
+            onDismissRequest = {
+                onSignUpSuccess()
+            },
+            onConfirmButtonClick = {
+                onSignUpSuccess()
+            },
+            message = stringResource(id = R.string.feature_sign_up_success)
+        )
+    }
 }
 
 @Composable
@@ -58,34 +74,16 @@ private fun ErrorDialog(
     onFormEvent: (SignUpFormEvent) -> Unit
 ) {
     formState.apiErrorMessageResId?.let { resId ->
-        AlertDialog(
+
+        AppDialog(
             onDismissRequest = {
                 onFormEvent(SignUpFormEvent.DismissErrorDialog)
             },
-            confirmButton = {
-                TextButton(onClick = {
-                    onFormEvent(SignUpFormEvent.DismissErrorDialog)
-                }) {
-                    Text(
-                        text = stringResource(id = R.string.common_ok)
-                    )
-                }
+            onConfirmButtonClick = {
+                onFormEvent(SignUpFormEvent.DismissErrorDialog)
             },
-            title = {
-                Text(
-                    text = stringResource(id = R.string.common_generic_error_title),
-                )
-            },
-            text = {
-                Text(
-                    text = stringResource(resId),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            },
-            containerColor = MaterialTheme.colorScheme.surface,
-            titleContentColor = MaterialTheme.colorScheme.onSurface,
-            textContentColor = MaterialTheme.colorScheme.onSurface
-
+            title = stringResource(id = R.string.common_generic_error_title),
+            message = stringResource(resId)
         )
     }
 }

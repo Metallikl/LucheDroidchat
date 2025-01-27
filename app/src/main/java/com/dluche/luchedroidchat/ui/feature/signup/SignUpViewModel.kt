@@ -81,7 +81,7 @@ class SignUpViewModel @Inject constructor(
                 val compressedFile = imageCompressor.compressAndResizeImage(uri)
                 formState = formState.copy(profilePictureUri = compressedFile.toUri())
             } catch (e: Exception) {
-
+                //todo
             } finally {
                 formState = formState.copy(isCompressingImage = false)
             }
@@ -102,13 +102,30 @@ class SignUpViewModel @Inject constructor(
         if (isValidForm()) {
             formState = formState.copy(isLoading = true)
             viewModelScope.launch {
+                var profilePictureId: Int? = null
+                var hasUploadFailed = false
+                formState.profilePictureUri?.path?.let { path ->
+                    authRepository.uploadProfilePicture(path).fold(
+                        onSuccess = { imageData ->
+                            profilePictureId = imageData.id
+                        },
+                        onFailure = {
+                            hasUploadFailed = true
+                        }
+                    )
+                }
+
+                if(hasUploadFailed) {
+                   return@launch
+                }
+
                 authRepository.signUp(
                     CreateAccount(
-                        username = "",
-                        password = "",
+                        username = formState.email,
+                        password = formState.password,
                         firstName = formState.firstName,
                         lastName = formState.lastName,
-                        profilePictureId = null
+                        profilePictureId = profilePictureId
                     )
                 ).fold(
                     onSuccess = {
@@ -124,10 +141,10 @@ class SignUpViewModel @Inject constructor(
                                 when (it.statusCode) {
                                     400 -> R.string.error_message_api_form_validation_failed
                                     409 -> R.string.error_message_user_with_username_already_exists
-                                    else -> R.string.common_generic_error_title
+                                    else -> R.string.common_generic_error_message
                                 }
                             } else {
-                                R.string.common_generic_error_title
+                                R.string.common_generic_error_message
                             }
                         )
                     }
