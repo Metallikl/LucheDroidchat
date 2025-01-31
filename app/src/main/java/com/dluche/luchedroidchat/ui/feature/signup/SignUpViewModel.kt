@@ -110,6 +110,11 @@ class SignUpViewModel @Inject constructor(
                             profilePictureId = imageData.id
                         },
                         onFailure = {
+                            formState = formState.copy(
+                                isLoading = false,
+                                profilePictureUri = null,
+                                apiErrorMessageResId = R.string.error_message_profile_picture_uploading_failed
+                            )
                             hasUploadFailed = true
                         }
                     )
@@ -135,22 +140,26 @@ class SignUpViewModel @Inject constructor(
                         )
                     },
                     onFailure = {
-                        formState = formState.copy(
-                            isLoading = false,
-                            apiErrorMessageResId = if (it is NetworkException.ApiException) {
-                                when (it.statusCode) {
-                                    400 -> R.string.error_message_api_form_validation_failed
-                                    409 -> R.string.error_message_user_with_username_already_exists
-                                    else -> R.string.common_generic_error_message
-                                }
-                            } else {
-                                R.string.common_generic_error_message
-                            }
-                        )
+                        handleSignUpFailure(it)
                     }
                 )
             }
         }
+    }
+
+    private fun handleSignUpFailure(failureCause: Throwable) {
+        formState = formState.copy(
+            isLoading = false,
+            apiErrorMessageResId = if (failureCause is NetworkException.ApiException) {
+                when (failureCause.statusCode) {
+                    HTTP_STATUS_VALIDATION_FAILURE -> R.string.error_message_api_form_validation_failed
+                    HTTP_STATUS_USER_ALREADY_EXISTS -> R.string.error_message_user_with_username_already_exists
+                    else -> R.string.common_generic_error_message
+                }
+            } else {
+                R.string.common_generic_error_message
+            }
+        )
     }
 
     private fun isValidForm(): Boolean {
@@ -161,5 +170,10 @@ class SignUpViewModel @Inject constructor(
 
     private fun dismissErrorDialog() {
         formState = formState.copy(apiErrorMessageResId = null)
+    }
+
+    companion object{
+        const val HTTP_STATUS_VALIDATION_FAILURE = 400
+        const val HTTP_STATUS_USER_ALREADY_EXISTS = 409
     }
 }
