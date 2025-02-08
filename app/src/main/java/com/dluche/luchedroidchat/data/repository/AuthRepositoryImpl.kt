@@ -6,6 +6,7 @@ import com.dluche.luchedroidchat.data.network.model.AuthRequest
 import com.dluche.luchedroidchat.data.network.model.CreateAccountRequest
 import com.dluche.luchedroidchat.model.CreateAccount
 import com.dluche.luchedroidchat.model.ImageData
+import com.dluche.luchedroidchat.model.SignInData
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -30,13 +31,19 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun signIn(email: String, password: String) {
-        networkDataSource.signIn(
-            request = AuthRequest(
-                username = email,
-                password = password
-            )
-        )
+    override suspend fun signIn(email: String, password: String): Result<SignInData> {
+        return withContext(dispatcher) {
+            runCatching {
+                val tokenResponse = networkDataSource.signIn(
+                    request = AuthRequest(
+                        username = email,
+                        password = password
+                    )
+                )
+
+                SignInData(token = tokenResponse.token)
+            }
+        }
     }
 
     override suspend fun uploadProfilePicture(filePath: String): Result<ImageData> {
