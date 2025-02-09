@@ -17,7 +17,6 @@ fun AppDialog(
     modifier: Modifier = Modifier,
     title: String? = null,
     confirmButtonText: String = stringResource(id = R.string.common_ok)
-
 ) {
     AlertDialog(
         onDismissRequest = {

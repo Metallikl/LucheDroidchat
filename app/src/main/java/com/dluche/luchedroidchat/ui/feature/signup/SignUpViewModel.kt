@@ -12,6 +12,8 @@ import com.dluche.luchedroidchat.data.repository.AuthRepository
 import com.dluche.luchedroidchat.model.CreateAccount
 import com.dluche.luchedroidchat.model.NetworkException
 import com.dluche.luchedroidchat.ui.validator.FormValidator
+import com.dluche.luchedroidchat.util.error.ErrorConstants.HTTP_STATUS_USER_ALREADY_EXISTS
+import com.dluche.luchedroidchat.util.error.ErrorConstants.HTTP_STATUS_VALIDATION_FAILURE
 import com.dluche.luchedroidchat.util.image.ImageCompressor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -170,10 +172,5 @@ class SignUpViewModel @Inject constructor(
 
     private fun dismissErrorDialog() {
         formState = formState.copy(apiErrorMessageResId = null)
-    }
-
-    companion object{
-        const val HTTP_STATUS_VALIDATION_FAILURE = 400
-        const val HTTP_STATUS_USER_ALREADY_EXISTS = 409
     }
 }

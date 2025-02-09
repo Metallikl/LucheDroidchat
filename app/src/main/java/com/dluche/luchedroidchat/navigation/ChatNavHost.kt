@@ -56,7 +56,8 @@ fun ChatNavHost() {
             SignInRoute(
                 navigateToSignUp = {
                     navController.navigate(Route.SignUpRoute)
-                }
+                },
+                navigateToHome = {}
             )
         }
         composable<Route.SignUpRoute>(
