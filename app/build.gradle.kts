@@ -99,6 +99,7 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.client.logging)
     implementation(libs.exifinterface)
+    implementation(libs.constraint.layout.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
