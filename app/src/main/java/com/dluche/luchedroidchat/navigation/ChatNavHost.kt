@@ -9,22 +9,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import com.dluche.luchedroidchat.ui.feature.chats.ChatsRoute
+import com.dluche.luchedroidchat.ui.feature.chats.navigateToChats
 import com.dluche.luchedroidchat.ui.feature.signin.SignInRoute
 import com.dluche.luchedroidchat.ui.feature.signup.SignUpRoute
 import com.dluche.luchedroidchat.ui.feature.splash.SplashRoute
 import kotlinx.serialization.Serializable
-
-sealed interface Route {
-    @Serializable
-    object SplashRoute
-
-    @Serializable
-    object SignInRoute
-
-    @Serializable
-    object SignUpRoute
-}
-
 
 @Composable
 fun ChatNavHost() {
@@ -46,11 +36,13 @@ fun ChatNavHost() {
                     )
                 },
                 onNavigateToMain = {
-                    Toast.makeText(
-                        navController.context,
-                        "Navigate to main",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    navController.navigateToChats(
+                        navOptions = navOptions {
+                            popUpTo(Route.SplashRoute) {
+                                inclusive = true
+                            }
+                        }
+                    )
                 },
                 onCloseApp = {
                     activity?.finish()
@@ -70,11 +62,13 @@ fun ChatNavHost() {
                     navController.navigate(Route.SignUpRoute)
                 },
                 navigateToMain = {
-                    Toast.makeText(
-                        navController.context,
-                        "Navigate to main",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    navController.navigateToChats(
+                        navOptions = navOptions {
+                            popUpTo(Route.SignUpRoute) {
+                                inclusive = true
+                            }
+                        }
+                    )
                 }
             )
         }
@@ -91,6 +85,10 @@ fun ChatNavHost() {
                     navController.popBackStack()
                 }
             )
+        }
+
+        composable<Route.ChatsRoute>(){
+            ChatsRoute()
         }
     }
 }
