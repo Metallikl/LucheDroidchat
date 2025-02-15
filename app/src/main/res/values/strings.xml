@@ -38,5 +38,6 @@
     <string name="common_add_profile_photo_optimizing">Otimizando…</string>
     <string name="feature_sign_up_success">Cadastro realizado com sucesso. Faça login para continuar</string>
     <string name="error_message_profile_picture_uploading_failed">Erro ao fazer upload da foto de perfil, tente novamente (formatos aceitos: jpg, jpeg, png)</string>
-
+    <string name="error_message_when_opening_app">Ocorreu um erro inesperado ao abrir o aplicativo\n\nPor favor, tente novamente mais tarde.</string>
+    <string name="error_confirm_button_close_app">Fechar aplicativo</string>
 </resources>

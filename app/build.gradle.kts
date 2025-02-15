@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.hiltAndroid)
+    alias(libs.plugins.protoBuf)
 
 }
 
@@ -79,6 +80,7 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.datastore)
     implementation(libs.protobuf.javalite)
+    implementation(libs.security.crypto)
 
     implementation(libs.kotlinx.serialization.json)
 
@@ -105,4 +107,20 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.24.4"
+    }
+
+    generateProtoTasks {
+        all().configureEach {
+            builtins {
+                create("java") {
+                    option("lite")
+                }
+            }
+        }
+    }
 }

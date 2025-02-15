@@ -1,19 +1,36 @@
 package com.dluche.luchedroidchat.data.repository
 
 import com.dluche.luchedroidchat.data.IoDispatcher
+import com.dluche.luchedroidchat.data.manager.selfuser.SelfUserManager
+import com.dluche.luchedroidchat.data.manager.token.TokenManager
 import com.dluche.luchedroidchat.data.network.NetworkDataSource
 import com.dluche.luchedroidchat.data.network.model.AuthRequest
 import com.dluche.luchedroidchat.data.network.model.CreateAccountRequest
 import com.dluche.luchedroidchat.model.CreateAccount
 import com.dluche.luchedroidchat.model.ImageData
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
     private val networkDataSource: NetworkDataSource,
+    private val tokenManager: TokenManager,
+    private val selfUserManager: SelfUserManager,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : AuthRepository {
+
+    override suspend fun getAccessToken(): String? {
+        return tokenManager.accessToken.firstOrNull()
+    }
+
+    override suspend fun clearAccessToken() {
+        withContext(dispatcher) {
+            tokenManager.clearAccessToken()
+        }
+    }
+
+
     override suspend fun signUp(createAccount: CreateAccount): Result<Unit> {
         return withContext(dispatcher) {
             runCatching {
@@ -30,13 +47,19 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun signIn(email: String, password: String) {
-        networkDataSource.signIn(
-            request = AuthRequest(
-                username = email,
-                password = password
-            )
-        )
+    override suspend fun signIn(email: String, password: String): Result<Unit> {
+        return withContext(dispatcher) {
+            runCatching {
+                val tokenResponse = networkDataSource.signIn(
+                    request = AuthRequest(
+                        username = email,
+                        password = password,
+                    )
+                )
+
+                tokenManager.saveAccessToken(tokenResponse.token)
+            }
+        }
     }
 
     override suspend fun uploadProfilePicture(filePath: String): Result<ImageData> {
@@ -48,6 +71,21 @@ class AuthRepositoryImpl @Inject constructor(
                     name = imageResponse.name,
                     type = imageResponse.type,
                     url = imageResponse.url
+                )
+            }
+        }
+    }
+
+    override suspend fun authenticate(token: String): Result<Unit> {
+        return withContext(dispatcher) {
+            runCatching {
+                val userResponse = networkDataSource.authenticate(token)
+
+                selfUserManager.saveSelfUserData(
+                    firstName = userResponse.firstName,
+                    lastName = userResponse.lastName,
+                    profilePictureUrl = userResponse.profilePictureUrl.orEmpty(),
+                    username = userResponse.username,
                 )
             }
         }
