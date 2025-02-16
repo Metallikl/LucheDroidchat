@@ -9,9 +9,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.dluche.luchedroidchat.navigation.ChatNavHost
+import com.dluche.luchedroidchat.navigation.rememberDroidChatNavigationState
 
 @Composable
 fun ChatApp() {
+    val navigationState = rememberDroidChatNavigationState()
     Scaffold(
         bottomBar = {
             //BottomBar()
@@ -24,7 +26,7 @@ fun ChatApp() {
                 .imePadding()//considera padding quando o teclado aparece, empurrando layout pra cima
                 .fillMaxSize()
         ){
-            ChatNavHost()
+            ChatNavHost(navigationState = navigationState)
         }
     }
 }

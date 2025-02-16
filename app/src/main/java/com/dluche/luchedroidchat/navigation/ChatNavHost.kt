@@ -17,10 +17,11 @@ import com.dluche.luchedroidchat.ui.feature.splash.SplashRoute
 import kotlinx.serialization.Serializable
 
 @Composable
-fun ChatNavHost() {
-    val navController = rememberNavController()
+fun ChatNavHost(
+    navigationState: LucheDroidChatNavigationState
+) {
+    val navController = navigationState.navController
     val activity = LocalContext.current as? Activity
-
 
     NavHost(navController = navController, startDestination = Route.SplashRoute) {
         composable<Route.SplashRoute> {

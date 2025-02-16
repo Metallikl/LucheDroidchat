@@ -1,0 +1,56 @@
+package com.dluche.luchedroidchat.navigation
+
+import android.annotation.SuppressLint
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.remember
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navOptions
+import com.dluche.luchedroidchat.ui.feature.chats.navigateToChats
+
+
+@Composable
+fun rememberDroidChatNavigationState(
+    navController: NavHostController = rememberNavController()
+): LucheDroidChatNavigationState {
+    return remember(navController) {
+        LucheDroidChatNavigationState(navController)
+    }
+}
+
+@Stable
+class LucheDroidChatNavigationState(
+    val navController: NavHostController,
+){
+    val currentDestination: NavDestination?
+        @Composable
+        get() = navController.currentBackStackEntryAsState().value?.destination
+
+    val currentTopLevelDestination: TopLevelDestination?
+        @SuppressLint("RestrictedApi") @Composable
+        get() = TopLevelDestination.entries.firstOrNull { topLevelDestination ->
+            currentDestination?.hasRoute(topLevelDestination.route) == true
+        }
+
+    val topLevelDestinations = TopLevelDestination.entries
+
+    fun navigateToTopLevelDestination(topLevelDestination: TopLevelDestination){
+        val topLevelNavOptions = navOptions {
+            popUpTo(navController.graph.startDestinationId){
+                saveState = true
+            }
+            launchSingleTop = true
+            restoreState = true
+        }
+
+        when(topLevelDestination){
+            TopLevelDestination.CHATS -> navController.navigateToChats(topLevelNavOptions)
+            TopLevelDestination.PLUS_BUTTON -> {}
+            TopLevelDestination.PROFILE -> {}
+        }
+    }
+}
