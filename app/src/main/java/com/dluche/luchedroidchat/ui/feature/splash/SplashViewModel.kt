@@ -9,6 +9,9 @@ import com.dluche.luchedroidchat.data.repository.AuthRepository
 import com.dluche.luchedroidchat.model.NetworkException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -18,8 +21,8 @@ class SplashViewModel @Inject constructor(
     private val authRepository: AuthRepository,
 ) : ViewModel() {
 
-    private val _authenticationState = Channel<AuthenticationState>()
-    val authenticationState = _authenticationState.receiveAsFlow()
+    private val _authenticationState = MutableSharedFlow<AuthenticationState>(replay = 1)
+    val authenticationState = _authenticationState.asSharedFlow()
 
     var showErrorDialogState by mutableStateOf(false)
         private set
@@ -30,18 +33,18 @@ class SplashViewModel @Inject constructor(
             val accessToken = authRepository.getAccessToken()
 
             if (accessToken.isNullOrBlank()) {
-                _authenticationState.send(AuthenticationState.UserNotAuthenticated)
+                _authenticationState.emit(AuthenticationState.UserNotAuthenticated)
                 return@launch
             }
 
             authRepository.authenticate(accessToken).fold(
                 onSuccess = {
-                    _authenticationState.send(AuthenticationState.UserAuthenticated)
+                    _authenticationState.emit(AuthenticationState.UserAuthenticated)
                 },
                 onFailure = {
                     if (it is NetworkException.ApiException && it.statusCode == 401) {
                         authRepository.clearAccessToken()
-                        _authenticationState.send(AuthenticationState.UserNotAuthenticated)
+                        _authenticationState.emit(AuthenticationState.UserNotAuthenticated)
                     } else {
                         showErrorDialogState = true
                     }
