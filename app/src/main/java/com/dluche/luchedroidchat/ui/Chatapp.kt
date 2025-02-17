@@ -10,14 +10,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.dluche.luchedroidchat.navigation.ChatNavHost
 import com.dluche.luchedroidchat.navigation.rememberDroidChatNavigationState
+import com.dluche.luchedroidchat.ui.components.BottomNavigationMenu
+import com.dluche.luchedroidchat.ui.theme.Grey1
 
 @Composable
 fun ChatApp() {
     val navigationState = rememberDroidChatNavigationState()
     Scaffold(
         bottomBar = {
-            //BottomBar()
-        }
+            val topLevelDestinations = navigationState.topLevelDestinations.toTypedArray()
+            if (topLevelDestinations.contains(navigationState.currentTopLevelDestination)) {
+                BottomNavigationMenu(
+                    navigationState = navigationState
+                )
+            }
+        },
+        containerColor = Grey1
     ) { innerPaddings ->
         Box(
             modifier = Modifier
@@ -25,7 +33,7 @@ fun ChatApp() {
                 .padding(paddingValues = innerPaddings)
                 .imePadding()//considera padding quando o teclado aparece, empurrando layout pra cima
                 .fillMaxSize()
-        ){
+        ) {
             ChatNavHost(navigationState = navigationState)
         }
     }
