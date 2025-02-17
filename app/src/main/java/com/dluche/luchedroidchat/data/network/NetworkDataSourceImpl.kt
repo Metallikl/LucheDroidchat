@@ -3,6 +3,8 @@ package com.dluche.luchedroidchat.data.network
 import com.dluche.luchedroidchat.data.network.model.AuthRequest
 import com.dluche.luchedroidchat.data.network.model.CreateAccountRequest
 import com.dluche.luchedroidchat.data.network.model.ImageResponse
+import com.dluche.luchedroidchat.data.network.model.PaginatedChatResponse
+import com.dluche.luchedroidchat.data.network.model.PaginationParams
 import com.dluche.luchedroidchat.data.network.model.TokenResponse
 import com.dluche.luchedroidchat.data.network.model.UserResponse
 import io.ktor.client.HttpClient
@@ -55,6 +57,19 @@ class NetworkDataSourceImpl @Inject constructor(
         }.body()
     }
 
+    override suspend fun getChats(
+        token: String,
+        paginationParams: PaginationParams
+    ): PaginatedChatResponse {
+        return client.get(CHATS_PATH) {
+            header(HttpHeaders.Authorization, "Bearer $token")
+            url {
+                parameters.append(OFFSET_PARAM, paginationParams.offset)
+                parameters.append(LIMIT_PARAM, paginationParams.limit)
+            }
+        }.body()
+    }
+
     companion object {
         const val SIGN_IN_PATH = "signin"
         const val SIGN_UP_PATH = "signup"
@@ -62,5 +77,8 @@ class NetworkDataSourceImpl @Inject constructor(
         const val PROFILE_PICTURE_PATH = "profile-picture"
         const val PROFILE_PICTURE_METADATA_KEY   = "filePicture"
         const val CONTENT_TYPE_IMAGE = "image/png"
+        const val OFFSET_PARAM = "offset"
+        const val LIMIT_PARAM = "limit"
+        const val CHATS_PATH = "conversations"
     }
 }
