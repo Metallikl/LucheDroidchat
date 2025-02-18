@@ -3,10 +3,12 @@
 package com.dluche.luchedroidchat.ui.feature.chats
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -16,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
@@ -23,18 +26,27 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dluche.luchedroidchat.R
+import com.dluche.luchedroidchat.model.Chat
 import com.dluche.luchedroidchat.ui.components.ChatItem
 import com.dluche.luchedroidchat.ui.theme.Grey1
 import com.dluche.luchedroidchat.ui.theme.LucheDroidChatTheme
 
 @Composable
-fun ChatsRoute() {
-    ChatsScreen()
+fun ChatsRoute(
+    viewModel: ChatsViewModel = hiltViewModel()
+) {
+    val iuState by viewModel.chatsListUiState.collectAsStateWithLifecycle()
+
+    ChatsScreen(iuState)
 }
 
 @Composable
-fun ChatsScreen() {
+fun ChatsScreen(
+    iuState: ChatsListUiState
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -57,8 +69,8 @@ fun ChatsScreen() {
             )
         },
         containerColor = MaterialTheme.colorScheme.primary,
-    ){ paddingValues ->
-        LazyColumn(
+    ) { paddingValues ->
+        Box(
             modifier = Modifier
                 .padding(paddingValues)
                 .background(
@@ -74,11 +86,33 @@ fun ChatsScreen() {
                         bottomEnd = CornerSize(0.dp)
                     )
                 )
-                .fillMaxSize(),
-            contentPadding = PaddingValues(horizontal = 16.dp)
+                .fillMaxSize()
         ) {
-            items(100){
-                ChatItem()
+            when (iuState) {
+                ChatsListUiState.Loading -> {
+
+                }
+
+                is ChatsListUiState.Success -> {
+                    ChatsListContent(iuState.chats)
+                }
+
+                ChatsListUiState.Error -> {
+
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ChatsListContent(chats: List<Chat>) {
+    LazyColumn(
+        contentPadding = PaddingValues(horizontal = 16.dp)
+    ) {
+        itemsIndexed(chats) { index, chat ->
+            ChatItem()
+            if (index < chats.lastIndex) {
                 HorizontalDivider(
                     color = Grey1
                 )
@@ -89,8 +123,25 @@ fun ChatsScreen() {
 
 @Preview
 @Composable
-private fun ChatsScreenPreview() {
-    LucheDroidChatTheme{
-        ChatsScreen()
+private fun ChatsScreenLoadingPreview() {
+    LucheDroidChatTheme {
+        ChatsScreen(ChatsListUiState.Loading)
     }
 }
+
+@Preview
+@Composable
+private fun ChatsScreenSuccessPreview() {
+    LucheDroidChatTheme {
+        ChatsScreen(ChatsListUiState.Success(emptyList()))
+    }
+}
+
+@Preview
+@Composable
+private fun ChatsScreenErrorPreview() {
+    LucheDroidChatTheme {
+        ChatsScreen(ChatsListUiState.Error)
+    }
+}
+
