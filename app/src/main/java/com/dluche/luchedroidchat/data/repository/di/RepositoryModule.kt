@@ -2,6 +2,8 @@ package com.dluche.luchedroidchat.data.repository.di
 
 import com.dluche.luchedroidchat.data.repository.AuthRepository
 import com.dluche.luchedroidchat.data.repository.AuthRepositoryImpl
+import com.dluche.luchedroidchat.data.repository.ChatRepository
+import com.dluche.luchedroidchat.data.repository.ChatRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -12,4 +14,7 @@ import dagger.hilt.android.components.ViewModelComponent
 interface RepositoryModule {
     @Binds
     fun bindsAuthRepository(repository: AuthRepositoryImpl): AuthRepository
+
+    @Binds
+    fun bindsChatRepository(repository: ChatRepositoryImpl): ChatRepository
 }

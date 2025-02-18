@@ -8,7 +8,7 @@ data class PaginatedChatResponse(
     @SerialName("conversations")
     val chats: List<ChatResponse>,
     val hasMore: Boolean,
-    val total: Int
+    val total: Int,
 )
 
 @Serializable
@@ -17,7 +17,8 @@ data class ChatResponse(
     val lastMessage: String?,
     val members: List<UserResponse>,
     val createdAt: Long,
-    val updatedAr: Long
+    val updatedAr: Long,
+    val unreadCount: Int
 )
 
 data class PaginationParams(
