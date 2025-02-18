@@ -25,12 +25,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dluche.luchedroidchat.R
 import com.dluche.luchedroidchat.model.Chat
 import com.dluche.luchedroidchat.ui.components.ChatItem
+import com.dluche.luchedroidchat.ui.preview.ChatListPreviewParameterProvider
 import com.dluche.luchedroidchat.ui.theme.Grey1
 import com.dluche.luchedroidchat.ui.theme.LucheDroidChatTheme
 
@@ -131,9 +133,12 @@ private fun ChatsScreenLoadingPreview() {
 
 @Preview
 @Composable
-private fun ChatsScreenSuccessPreview() {
+private fun ChatsScreenSuccessPreview(
+    @PreviewParameter(ChatListPreviewParameterProvider::class)
+    chats: List<Chat>
+) {
     LucheDroidChatTheme {
-        ChatsScreen(ChatsListUiState.Success(emptyList()))
+        ChatsScreen(ChatsListUiState.Success(chats))
     }
 }
 
