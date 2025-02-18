@@ -17,7 +17,7 @@ data class ChatResponse(
     val lastMessage: String?,
     val members: List<UserResponse>,
     val createdAt: Long,
-    val updatedAr: Long,
+    val updatedAt: Long,
     val unreadCount: Int
 )
 
