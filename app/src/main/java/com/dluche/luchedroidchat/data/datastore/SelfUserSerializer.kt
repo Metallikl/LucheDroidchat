@@ -2,8 +2,8 @@ package com.dluche.luchedroidchat.data.datastore
 
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
-import androidx.datastore.preferences.protobuf.InvalidProtocolBufferException
 import com.dluche.luchedroidchat.SelfUser
+import com.google.protobuf.InvalidProtocolBufferException
 
 import java.io.InputStream
 import java.io.OutputStream

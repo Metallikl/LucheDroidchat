@@ -100,6 +100,7 @@ dependencies {
     implementation(libs.ktor.client.logging)
     implementation(libs.exifinterface)
     implementation(libs.constraint.layout.compose)
+    implementation(libs.compose.shimmer)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

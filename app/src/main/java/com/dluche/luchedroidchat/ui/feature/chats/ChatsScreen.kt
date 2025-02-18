@@ -4,6 +4,7 @@ package com.dluche.luchedroidchat.ui.feature.chats
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -32,6 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dluche.luchedroidchat.R
 import com.dluche.luchedroidchat.model.Chat
 import com.dluche.luchedroidchat.ui.components.ChatItem
+import com.dluche.luchedroidchat.ui.components.ChatItemShimmer
 import com.dluche.luchedroidchat.ui.preview.ChatListPreviewParameterProvider
 import com.dluche.luchedroidchat.ui.theme.Grey1
 import com.dluche.luchedroidchat.ui.theme.LucheDroidChatTheme
@@ -92,7 +94,19 @@ fun ChatsScreen(
         ) {
             when (iuState) {
                 ChatsListUiState.Loading -> {
-
+                    Column(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                    ) {
+                        repeat(5){ index->
+                            ChatItemShimmer()
+                            if (index < 4) {
+                                HorizontalDivider(
+                                    color = Grey1
+                                )
+                            }
+                        }
+                    }
                 }
 
                 is ChatsListUiState.Success -> {

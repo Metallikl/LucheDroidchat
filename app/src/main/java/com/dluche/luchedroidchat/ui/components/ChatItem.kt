@@ -1,7 +1,5 @@
 package com.dluche.luchedroidchat.ui.components
 
-import android.view.View
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -79,7 +77,7 @@ fun ChatItem(
         )
 
         Text(
-            text = receiver.lastName.orEmpty(),
+            text = chat.lastMessage.orEmpty(),
             modifier = Modifier.constrainAs(lastMessageRef) {
                 top.linkTo(firstNameRef.bottom)
                 start.linkTo(avatarRef.end, margin = 16.dp)
@@ -96,7 +94,8 @@ fun ChatItem(
             modifier = Modifier.constrainAs(lastMessageTimeRef) {
                 top.linkTo(firstNameRef.top)
                 end.linkTo(parent.end)
-                bottom.linkTo(firstNameRef.top)
+                bottom.linkTo(firstNameRef.bottom)
+                width = Dimension.wrapContent
             },
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontWeight = FontWeight.Medium,
