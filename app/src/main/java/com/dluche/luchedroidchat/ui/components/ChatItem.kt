@@ -14,14 +14,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.dluche.luchedroidchat.R
+import com.dluche.luchedroidchat.model.Chat
+import com.dluche.luchedroidchat.ui.preview.ChatPreviewParameterProvider
 import com.dluche.luchedroidchat.ui.theme.LucheDroidChatTheme
 
 @Composable
-fun ChatItem(modifier: Modifier = Modifier) {
+fun ChatItem(
+    chat: Chat,
+    modifier: Modifier = Modifier
+) {
     ConstraintLayout(
         modifier = modifier
             .fillMaxWidth()
@@ -107,9 +113,13 @@ fun ChatItem(modifier: Modifier = Modifier) {
 
 @Preview
 @Composable
-private fun ChatItemPreview() {
+private fun ChatItemPreview(
+    @PreviewParameter(ChatPreviewParameterProvider::class)
+    chat: Chat
+) {
     LucheDroidChatTheme {
-        ChatItem()
-
+        ChatItem(
+            chat = chat
+        )
     }
 }

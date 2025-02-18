@@ -111,7 +111,7 @@ private fun ChatsListContent(chats: List<Chat>) {
         contentPadding = PaddingValues(horizontal = 16.dp)
     ) {
         itemsIndexed(chats) { index, chat ->
-            ChatItem()
+            ChatItem(chat)
             if (index < chats.lastIndex) {
                 HorizontalDivider(
                     color = Grey1
