@@ -22,8 +22,11 @@ class ChatsViewModel @Inject constructor(
         getChats()
     }
 
-    private fun getChats() {
+    fun getChats() {
         viewModelScope.launch {
+            _chatsListUiState.update {
+                ChatsListUiState.Loading
+            }
             chatRepository.getChats(
                 offset = 0,
                 limit = 10

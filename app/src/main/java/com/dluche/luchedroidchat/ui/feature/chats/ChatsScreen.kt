@@ -33,6 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dluche.luchedroidchat.R
 import com.dluche.luchedroidchat.model.Chat
 import com.dluche.luchedroidchat.ui.components.ChatItem
+import com.dluche.luchedroidchat.ui.components.ChatItemError
 import com.dluche.luchedroidchat.ui.components.ChatItemShimmer
 import com.dluche.luchedroidchat.ui.preview.ChatListPreviewParameterProvider
 import com.dluche.luchedroidchat.ui.theme.Grey1
@@ -44,12 +45,14 @@ fun ChatsRoute(
 ) {
 
     val iuState by viewModel.chatsListUiState.collectAsStateWithLifecycle()
-    ChatsScreen(iuState)
+    val onTryAgainClick = viewModel::getChats
+    ChatsScreen(iuState, onTryAgainClick)
 }
 
 @Composable
 fun ChatsScreen(
-    iuState: ChatsListUiState
+    iuState: ChatsListUiState,
+    onTryAgainClick: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -98,7 +101,7 @@ fun ChatsScreen(
                         modifier = Modifier
                             .padding(horizontal = 16.dp)
                     ) {
-                        repeat(5){ index->
+                        repeat(5) { index ->
                             ChatItemShimmer()
                             if (index < 4) {
                                 HorizontalDivider(
@@ -114,7 +117,7 @@ fun ChatsScreen(
                 }
 
                 ChatsListUiState.Error -> {
-
+                    ChatItemError(onTryAgainClick)
                 }
             }
         }
@@ -141,7 +144,10 @@ private fun ChatsListContent(chats: List<Chat>) {
 @Composable
 private fun ChatsScreenLoadingPreview() {
     LucheDroidChatTheme {
-        ChatsScreen(ChatsListUiState.Loading)
+        ChatsScreen(
+            iuState = ChatsListUiState.Loading,
+            onTryAgainClick = {}
+        )
     }
 }
 
@@ -152,7 +158,10 @@ private fun ChatsScreenSuccessPreview(
     chats: List<Chat>
 ) {
     LucheDroidChatTheme {
-        ChatsScreen(ChatsListUiState.Success(chats))
+        ChatsScreen(
+            iuState = ChatsListUiState.Success(chats),
+            onTryAgainClick = {}
+        )
     }
 }
 
@@ -160,7 +169,10 @@ private fun ChatsScreenSuccessPreview(
 @Composable
 private fun ChatsScreenErrorPreview() {
     LucheDroidChatTheme {
-        ChatsScreen(ChatsListUiState.Error)
+        ChatsScreen(
+            iuState = ChatsListUiState.Error,
+            onTryAgainClick = {}
+        )
     }
 }
 

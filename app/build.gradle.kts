@@ -101,6 +101,7 @@ dependencies {
     implementation(libs.exifinterface)
     implementation(libs.constraint.layout.compose)
     implementation(libs.compose.shimmer)
+    implementation(libs.lottie.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
