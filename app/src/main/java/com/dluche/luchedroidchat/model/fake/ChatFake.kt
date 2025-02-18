@@ -10,7 +10,7 @@ val chat1 = Chat(
         user1,
         user2
     ),
-    unreadCount = 2,
+    unreadCount = 0,
     timestamp = "12:35"
 )
 
@@ -21,7 +21,7 @@ val chat2 = Chat(
         user1,
         user3
     ),
-    unreadCount = 2,
+    unreadCount = 0,
     timestamp = "12:35"
 )
 

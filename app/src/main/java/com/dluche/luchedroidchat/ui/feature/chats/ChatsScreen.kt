@@ -38,8 +38,8 @@ import com.dluche.luchedroidchat.ui.theme.LucheDroidChatTheme
 fun ChatsRoute(
     viewModel: ChatsViewModel = hiltViewModel()
 ) {
-    val iuState by viewModel.chatsListUiState.collectAsStateWithLifecycle()
 
+    val iuState by viewModel.chatsListUiState.collectAsStateWithLifecycle()
     ChatsScreen(iuState)
 }
 

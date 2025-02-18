@@ -1,5 +1,6 @@
 package com.dluche.luchedroidchat.ui.components
 
+import android.view.View
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,6 +10,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
@@ -18,6 +20,8 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.constraintlayout.compose.Visibility
+import coil.compose.AsyncImage
 import com.dluche.luchedroidchat.R
 import com.dluche.luchedroidchat.model.Chat
 import com.dluche.luchedroidchat.ui.preview.ChatPreviewParameterProvider
@@ -28,6 +32,10 @@ fun ChatItem(
     chat: Chat,
     modifier: Modifier = Modifier
 ) {
+    val receiver = remember(chat.members) {
+        chat.members.first { it.self.not() }
+    }
+
     ConstraintLayout(
         modifier = modifier
             .fillMaxWidth()
@@ -40,22 +48,25 @@ fun ChatItem(
             unreadCountRef
         ) = createRefs()
 
-        Image(
-            painter = painterResource(id = R.drawable.no_profile_image),
+        AsyncImage(
+            model = receiver.profilePictureUrl,
             contentDescription = null,
             modifier = Modifier
                 .clip(shape = CircleShape)
                 .size(60.dp)
-                .constrainAs(avatarRef){
-                    top.linkTo(parent.top,margin = 16.dp)
+                .constrainAs(avatarRef) {
+                    top.linkTo(parent.top, margin = 16.dp)
                     start.linkTo(parent.start)
                     bottom.linkTo(parent.bottom, margin = 16.dp)
-                }
+                },
+            placeholder = painterResource(R.drawable.no_profile_image),
+            error = painterResource(R.drawable.no_profile_image),
+            fallback = painterResource(R.drawable.no_profile_image),
         )
 
         Text(
-            text = "Douglas",
-            modifier = Modifier.constrainAs(firstNameRef){
+            text = receiver.firstName,
+            modifier = Modifier.constrainAs(firstNameRef) {
                 top.linkTo(avatarRef.top)
                 start.linkTo(avatarRef.end, margin = 16.dp)
                 end.linkTo(lastMessageTimeRef.start, margin = 16.dp)
@@ -68,8 +79,8 @@ fun ChatItem(
         )
 
         Text(
-            text = "Olá",
-            modifier = Modifier.constrainAs(lastMessageRef){
+            text = receiver.lastName.orEmpty(),
+            modifier = Modifier.constrainAs(lastMessageRef) {
                 top.linkTo(firstNameRef.bottom)
                 start.linkTo(avatarRef.end, margin = 16.dp)
                 end.linkTo(unreadCountRef.start, margin = 16.dp)
@@ -81,11 +92,11 @@ fun ChatItem(
         )
 
         Text(
-            text = "12:35",
-            modifier = Modifier.constrainAs(lastMessageTimeRef){
+            text = chat.timestamp,
+            modifier = Modifier.constrainAs(lastMessageTimeRef) {
                 top.linkTo(firstNameRef.top)
                 end.linkTo(parent.end)
-                bottom.linkTo(unreadCountRef.top)
+                bottom.linkTo(firstNameRef.top)
             },
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontWeight = FontWeight.Medium,
@@ -93,19 +104,24 @@ fun ChatItem(
         )
 
         Text(
-            text = "2",
+            text = chat.unreadCount.toString(),
             modifier = Modifier
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.primaryContainer)
                 .padding(horizontal = 4.dp)
-                .constrainAs(unreadCountRef){
-                top.linkTo(lastMessageTimeRef.bottom)
-                end.linkTo(parent.end)
-                bottom.linkTo(lastMessageRef.bottom)
-            },
+                .constrainAs(unreadCountRef) {
+                    top.linkTo(lastMessageTimeRef.bottom)
+                    end.linkTo(parent.end)
+                    bottom.linkTo(lastMessageRef.bottom)
+                    visibility = if (chat.unreadCount > 0) {
+                        Visibility.Visible
+                    } else {
+                        Visibility.Gone
+                    }
+                },
             color = MaterialTheme.colorScheme.onSurface,
             fontWeight = FontWeight.Medium,
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyMedium,
         )
     }
 }
