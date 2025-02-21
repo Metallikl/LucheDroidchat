@@ -1,5 +1,6 @@
 package com.dluche.luchedroidchat.data.network.di
 
+import com.dluche.luchedroidchat.data.manager.token.TokenManager
 import com.dluche.luchedroidchat.model.NetworkException
 import dagger.Module
 import dagger.Provides
@@ -9,6 +10,9 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.HttpResponseValidator
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerTokens
+import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
@@ -19,6 +23,7 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.serialization.json.Json
 import javax.inject.Singleton
 
@@ -30,7 +35,9 @@ object ApiModule {
 
     @Provides
     @Singleton
-    fun provideHttpClient(): HttpClient {
+    fun provideHttpClient(
+        tokenManager: TokenManager
+    ): HttpClient {
         return HttpClient(CIO) {
             //melhora logs quando exception indicando a criação das exception por faixa de status code
             expectSuccess = true
@@ -62,6 +69,18 @@ object ApiModule {
                         NetworkException.ApiException(errorMessage, cause.response.status.value)
                     } else {
                         NetworkException.UnknownNetworkException(cause)
+                    }
+                }
+            }
+
+            //Se token existir, ktor adiciona no header da request.
+            install(Auth) {
+                bearer {
+                    loadTokens {
+                        val accessTokens = tokenManager.accessToken.firstOrNull()
+                        accessTokens?.let{ token ->
+                            BearerTokens(token, "")
+                        }
                     }
                 }
             }

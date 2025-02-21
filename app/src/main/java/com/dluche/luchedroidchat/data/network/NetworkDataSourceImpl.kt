@@ -9,10 +9,12 @@ import com.dluche.luchedroidchat.data.network.model.TokenResponse
 import com.dluche.luchedroidchat.data.network.model.UserResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerAuthProvider
+import io.ktor.client.plugins.plugin
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.forms.submitFormWithBinaryData
 import io.ktor.client.request.get
-import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.Headers
@@ -34,7 +36,11 @@ class NetworkDataSourceImpl @Inject constructor(
     override suspend fun signIn(request: AuthRequest): TokenResponse {
         return client.post(SIGN_IN_PATH) {
             setBody(request)
-        }.body()
+        }.body<TokenResponse>().also {
+            //workaround para que o plugin Auth do ktor seja atualizado para que nas novas chamadas,
+            //o token seja enviado
+            client.plugin(Auth).providers.filterIsInstance<BearerAuthProvider>().first().clearToken()
+        }
     }
 
     override suspend fun uploadProfilePicture(filePath: String): ImageResponse {
@@ -51,18 +57,14 @@ class NetworkDataSourceImpl @Inject constructor(
         ).body()
     }
 
-    override suspend fun authenticate(token: String): UserResponse {
-        return client.get(AUTH_PATH) {
-            header(HttpHeaders.Authorization, "Bearer $token")
-        }.body()
+    override suspend fun authenticate(): UserResponse {
+        return client.get(AUTH_PATH).body()
     }
 
     override suspend fun getChats(
-        token: String,
         paginationParams: PaginationParams
     ): PaginatedChatResponse {
         return client.get(CHATS_PATH) {
-            header(HttpHeaders.Authorization, "Bearer $token")
             url {
                 parameters.append(OFFSET_PARAM, paginationParams.offset)
                 parameters.append(LIMIT_PARAM, paginationParams.limit)

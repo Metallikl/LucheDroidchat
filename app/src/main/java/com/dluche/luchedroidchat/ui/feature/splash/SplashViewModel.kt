@@ -8,11 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.dluche.luchedroidchat.data.repository.AuthRepository
 import com.dluche.luchedroidchat.model.NetworkException
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -37,7 +34,7 @@ class SplashViewModel @Inject constructor(
                 return@launch
             }
 
-            authRepository.authenticate(accessToken).fold(
+            authRepository.authenticate().fold(
                 onSuccess = {
                     _authenticationState.emit(AuthenticationState.UserAuthenticated)
                 },
