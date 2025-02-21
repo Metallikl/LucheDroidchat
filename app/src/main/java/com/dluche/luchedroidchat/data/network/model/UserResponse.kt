@@ -10,3 +10,10 @@ data class UserResponse(
     val profilePictureUrl: String?,
     val username: String,
 )
+
+@Serializable
+data class PaginatedUserResponse(
+    val users: List<UserResponse>,
+    val hasMore: Boolean,
+    val total: Int,
+)

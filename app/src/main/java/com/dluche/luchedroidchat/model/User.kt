@@ -5,6 +5,6 @@ data class User(
     val self: Boolean,
     val firstName: String,
     val lastName: String,
-    val profilePictureUrl: String,
+    val profilePictureUrl: String?,
     val username: String
 )

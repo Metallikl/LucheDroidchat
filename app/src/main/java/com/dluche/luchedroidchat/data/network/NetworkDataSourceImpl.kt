@@ -4,6 +4,7 @@ import com.dluche.luchedroidchat.data.network.model.AuthRequest
 import com.dluche.luchedroidchat.data.network.model.CreateAccountRequest
 import com.dluche.luchedroidchat.data.network.model.ImageResponse
 import com.dluche.luchedroidchat.data.network.model.PaginatedChatResponse
+import com.dluche.luchedroidchat.data.network.model.PaginatedUserResponse
 import com.dluche.luchedroidchat.data.network.model.PaginationParams
 import com.dluche.luchedroidchat.data.network.model.TokenResponse
 import com.dluche.luchedroidchat.data.network.model.UserResponse
@@ -19,6 +20,7 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
+import io.ktor.http.URLBuilder
 import java.io.File
 import javax.inject.Inject
 
@@ -39,7 +41,8 @@ class NetworkDataSourceImpl @Inject constructor(
         }.body<TokenResponse>().also {
             //workaround para que o plugin Auth do ktor seja atualizado para que nas novas chamadas,
             //o token seja enviado
-            client.plugin(Auth).providers.filterIsInstance<BearerAuthProvider>().first().clearToken()
+            client.plugin(Auth).providers.filterIsInstance<BearerAuthProvider>().first()
+                .clearToken()
         }
     }
 
@@ -66,10 +69,22 @@ class NetworkDataSourceImpl @Inject constructor(
     ): PaginatedChatResponse {
         return client.get(CHATS_PATH) {
             url {
-                parameters.append(OFFSET_PARAM, paginationParams.offset)
-                parameters.append(LIMIT_PARAM, paginationParams.limit)
+                appendPaginationParams(paginationParams)
             }
         }.body()
+    }
+
+    override suspend fun getUser(paginationParams: PaginationParams): PaginatedUserResponse {
+        return client.get(USERS_PATH) {
+            url {
+                appendPaginationParams(paginationParams)
+            }
+        }.body()
+    }
+
+    private fun URLBuilder.appendPaginationParams(paginationParams: PaginationParams) {
+        parameters.append(OFFSET_PARAM, paginationParams.offset)
+        parameters.append(LIMIT_PARAM, paginationParams.limit)
     }
 
     companion object {
@@ -77,10 +92,11 @@ class NetworkDataSourceImpl @Inject constructor(
         const val SIGN_UP_PATH = "signup"
         const val AUTH_PATH = "authenticate"
         const val PROFILE_PICTURE_PATH = "profile-picture"
-        const val PROFILE_PICTURE_METADATA_KEY   = "filePicture"
+        const val PROFILE_PICTURE_METADATA_KEY = "filePicture"
         const val CONTENT_TYPE_IMAGE = "image/png"
         const val OFFSET_PARAM = "offset"
         const val LIMIT_PARAM = "limit"
         const val CHATS_PATH = "conversations"
+        const val USERS_PATH = "conversations"
     }
 }
