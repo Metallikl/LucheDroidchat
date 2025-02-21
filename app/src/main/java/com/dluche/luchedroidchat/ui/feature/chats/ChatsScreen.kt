@@ -35,6 +35,7 @@ import com.dluche.luchedroidchat.model.Chat
 import com.dluche.luchedroidchat.ui.components.AnimatedContent
 import com.dluche.luchedroidchat.ui.components.ChatItem
 import com.dluche.luchedroidchat.ui.components.ChatItemShimmer
+import com.dluche.luchedroidchat.ui.components.GeneralEmptyList
 import com.dluche.luchedroidchat.ui.components.GeneralError
 import com.dluche.luchedroidchat.ui.components.PrimaryButton
 import com.dluche.luchedroidchat.ui.preview.ChatListPreviewParameterProvider
@@ -115,7 +116,23 @@ fun ChatsScreen(
                 }
 
                 is ChatsListUiState.Success -> {
-                    ChatsListContent(iuState.chats)
+                    when (iuState.chats.isNotEmpty()) {
+                        true -> {
+                            ChatsListContent(iuState.chats)
+
+                        }
+
+                        else -> {
+                            GeneralEmptyList(
+                                message = stringResource(R.string.feature_chats_empty_list),
+                                resourceContent = {
+                                    AnimatedContent(
+                                        resId = R.raw.animation_empty_list
+                                    )
+                                }
+                            )
+                        }
+                    }
                 }
 
                 ChatsListUiState.Error -> {
@@ -178,6 +195,21 @@ private fun ChatsScreenSuccessPreview(
         )
     }
 }
+
+@Preview
+@Composable
+private fun ChatsScreenEmptyListPreview(
+    @PreviewParameter(ChatListPreviewParameterProvider::class)
+    chats: List<Chat>
+) {
+    LucheDroidChatTheme {
+        ChatsScreen(
+            iuState = ChatsListUiState.Success(emptyList()),
+            onTryAgainClick = {}
+        )
+    }
+}
+
 
 @Preview
 @Composable
