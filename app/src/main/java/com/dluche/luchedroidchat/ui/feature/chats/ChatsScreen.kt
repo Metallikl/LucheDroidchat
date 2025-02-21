@@ -32,9 +32,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dluche.luchedroidchat.R
 import com.dluche.luchedroidchat.model.Chat
+import com.dluche.luchedroidchat.ui.components.AnimatedContent
 import com.dluche.luchedroidchat.ui.components.ChatItem
-import com.dluche.luchedroidchat.ui.components.ChatItemError
 import com.dluche.luchedroidchat.ui.components.ChatItemShimmer
+import com.dluche.luchedroidchat.ui.components.GeneralError
+import com.dluche.luchedroidchat.ui.components.PrimaryButton
 import com.dluche.luchedroidchat.ui.preview.ChatListPreviewParameterProvider
 import com.dluche.luchedroidchat.ui.theme.Grey1
 import com.dluche.luchedroidchat.ui.theme.LucheDroidChatTheme
@@ -117,7 +119,19 @@ fun ChatsScreen(
                 }
 
                 ChatsListUiState.Error -> {
-                    ChatItemError(onTryAgainClick)
+                    GeneralError(
+                        title = stringResource(R.string.common_generic_error_title),
+                        message = stringResource(R.string.common_generic_error_message),
+                        resourceContent = {
+                            AnimatedContent()
+                        },
+                        actionContent = {
+                            PrimaryButton(
+                                text = stringResource(R.string.common_try_again),
+                                onClick = onTryAgainClick
+                            )
+                        }
+                    )
                 }
             }
         }
