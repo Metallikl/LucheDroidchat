@@ -11,7 +11,5 @@ import javax.inject.Inject
 class UsersViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
-
     val users = userRepository.getUsers().cachedIn(viewModelScope)
-
 }
