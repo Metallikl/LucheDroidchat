@@ -6,7 +6,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -39,7 +38,7 @@ fun BottomNavigationMenu(
         tonalElevation = 0.dp
     ) {
         navigationState.topLevelDestinations.forEach { topLevelDestination ->
-            if(topLevelDestination == TopLevelDestination.PLUS_BUTTON){
+            if (topLevelDestination == TopLevelDestination.PLUS_BUTTON) {
                 FloatingActionButton(
                     onClick = {
                         navigationState.navigateToTopLevelDestination(topLevelDestination)
@@ -60,14 +59,13 @@ fun BottomNavigationMenu(
                     )
                 }
             } else {
-                val selected = navigationState.currentDestination.isRouteInHierarchy(topLevelDestination.route)
+                val selected =
+                    navigationState.currentDestination.isRouteInHierarchy(topLevelDestination.route)
                 val label = topLevelDestination.titleRes?.let { res -> stringResource(res) }
                 NavigationBarItem(
                     selected = selected,
                     onClick = {
-                        if (!selected) {
-                            navigationState.navigateToTopLevelDestination(topLevelDestination)
-                        }
+                        navigationState.navigateToTopLevelDestination(topLevelDestination)
                     },
                     icon = {
                         topLevelDestination.iconRes?.let {
@@ -96,9 +94,9 @@ fun BottomNavigationMenu(
     }
 
 }
+
 private fun NavDestination?.isRouteInHierarchy(route: KClass<*>) =
     this?.hierarchy?.any { it.hasRoute(route) } ?: false
-
 
 
 @Preview
