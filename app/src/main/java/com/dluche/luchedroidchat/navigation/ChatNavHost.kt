@@ -1,27 +1,25 @@
 package com.dluche.luchedroidchat.navigation
 
 import android.app.Activity
-import android.widget.Toast
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.dluche.luchedroidchat.ui.feature.chats.ChatsRoute
 import com.dluche.luchedroidchat.ui.feature.chats.navigateToChats
 import com.dluche.luchedroidchat.ui.feature.signin.SignInRoute
 import com.dluche.luchedroidchat.ui.feature.signup.SignUpRoute
 import com.dluche.luchedroidchat.ui.feature.splash.SplashRoute
-import kotlinx.serialization.Serializable
+import com.dluche.luchedroidchat.ui.feature.users.UsersRoute
 
 @Composable
 fun ChatNavHost(
     navigationState: LucheDroidChatNavigationState
 ) {
     val navController = navigationState.navController
-    val activity = LocalContext.current as? Activity
+    val activity = LocalActivity.current as Activity
 
     NavHost(navController = navController, startDestination = Route.SplashRoute) {
         composable<Route.SplashRoute> {
@@ -46,7 +44,7 @@ fun ChatNavHost(
                     )
                 },
                 onCloseApp = {
-                    activity?.finish()
+                    activity.finish()
                 }
             )
         }
@@ -88,8 +86,12 @@ fun ChatNavHost(
             )
         }
 
-        composable<Route.ChatsRoute>(){
+        composable<Route.ChatsRoute>() {
             ChatsRoute()
+        }
+
+        composable<Route.UsersRoute> {
+            UsersRoute()
         }
     }
 }

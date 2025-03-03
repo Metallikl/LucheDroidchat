@@ -11,6 +11,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.dluche.luchedroidchat.ui.feature.chats.navigateToChats
+import com.dluche.luchedroidchat.ui.feature.users.navigateToUsers
 
 
 @Composable
@@ -49,7 +50,7 @@ class LucheDroidChatNavigationState(
 
         when(topLevelDestination){
             TopLevelDestination.CHATS -> navController.navigateToChats(topLevelNavOptions)
-            TopLevelDestination.PLUS_BUTTON -> {}
+            TopLevelDestination.PLUS_BUTTON -> navController.navigateToUsers(topLevelNavOptions)
             TopLevelDestination.PROFILE -> {}
         }
     }
