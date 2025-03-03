@@ -4,6 +4,8 @@ import com.dluche.luchedroidchat.data.repository.AuthRepository
 import com.dluche.luchedroidchat.data.repository.AuthRepositoryImpl
 import com.dluche.luchedroidchat.data.repository.ChatRepository
 import com.dluche.luchedroidchat.data.repository.ChatRepositoryImpl
+import com.dluche.luchedroidchat.data.repository.UserRepository
+import com.dluche.luchedroidchat.data.repository.UserRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -17,4 +19,7 @@ interface RepositoryModule {
 
     @Binds
     fun bindsChatRepository(repository: ChatRepositoryImpl): ChatRepository
+
+    @Binds
+    fun bindsUserRepository(repository: UserRepositoryImpl): UserRepository
 }

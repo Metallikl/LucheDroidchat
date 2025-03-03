@@ -89,6 +89,6 @@ class NetworkDataSourceImpl @Inject constructor(
         const val OFFSET_PARAM = "offset"
         const val LIMIT_PARAM = "limit"
         const val CHATS_PATH = "conversations"
-        const val USERS_PATH = "conversations"
+        const val USERS_PATH = "users"
     }
 }
