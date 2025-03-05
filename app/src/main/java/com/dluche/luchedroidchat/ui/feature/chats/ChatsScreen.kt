@@ -2,26 +2,18 @@
 
 package com.dluche.luchedroidchat.ui.feature.chats
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.fromHtml
@@ -35,6 +27,8 @@ import com.dluche.luchedroidchat.model.Chat
 import com.dluche.luchedroidchat.ui.components.AnimatedContent
 import com.dluche.luchedroidchat.ui.components.ChatItem
 import com.dluche.luchedroidchat.ui.components.ChatItemShimmer
+import com.dluche.luchedroidchat.ui.components.ChatScaffold
+import com.dluche.luchedroidchat.ui.components.ChatTopAppBar
 import com.dluche.luchedroidchat.ui.components.GeneralEmptyList
 import com.dluche.luchedroidchat.ui.components.GeneralError
 import com.dluche.luchedroidchat.ui.components.PrimaryButton
@@ -57,9 +51,9 @@ fun ChatsScreen(
     iuState: ChatsListUiState,
     onTryAgainClick: () -> Unit
 ) {
-    Scaffold(
+    ChatScaffold(
         topBar = {
-            TopAppBar(
+            ChatTopAppBar(
                 title = {
                     Text(
                         text = AnnotatedString.fromHtml(
@@ -71,85 +65,61 @@ fun ChatsScreen(
                         color = MaterialTheme.colorScheme.onPrimary,
                         style = MaterialTheme.typography.titleLarge
                     )
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                ),
-                expandedHeight = 100.dp
+                }
             )
-        },
-        containerColor = MaterialTheme.colorScheme.primary,
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .padding(paddingValues)
-                .background(
-                    color = MaterialTheme.colorScheme.surface,
-                    shape = MaterialTheme.shapes.extraLarge.copy(
-                        bottomStart = CornerSize(0.dp),
-                        bottomEnd = CornerSize(0.dp)
-                    )
-                )
-                .clip(
-                    shape = MaterialTheme.shapes.extraLarge.copy(
-                        bottomStart = CornerSize(0.dp),
-                        bottomEnd = CornerSize(0.dp)
-                    )
-                )
-                .fillMaxSize()
-        ) {
-            when (iuState) {
-                ChatsListUiState.Loading -> {
-                    Column(
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                    ) {
-                        repeat(5) { index ->
-                            ChatItemShimmer()
-                            if (index < 4) {
-                                HorizontalDivider(
-                                    color = Grey1
+        }
+    ) {
+        when (iuState) {
+            ChatsListUiState.Loading -> {
+                Column(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                ) {
+                    repeat(5) { index ->
+                        ChatItemShimmer()
+                        if (index < 4) {
+                            HorizontalDivider(
+                                color = Grey1
+                            )
+                        }
+                    }
+                }
+            }
+
+            is ChatsListUiState.Success -> {
+                when (iuState.chats.isNotEmpty()) {
+                    true -> {
+                        ChatsListContent(iuState.chats)
+
+                    }
+
+                    else -> {
+                        GeneralEmptyList(
+                            message = stringResource(R.string.feature_chats_empty_list),
+                            resourceContent = {
+                                AnimatedContent(
+                                    resId = R.raw.animation_empty_list
                                 )
                             }
-                        }
+                        )
                     }
                 }
+            }
 
-                is ChatsListUiState.Success -> {
-                    when (iuState.chats.isNotEmpty()) {
-                        true -> {
-                            ChatsListContent(iuState.chats)
-
-                        }
-
-                        else -> {
-                            GeneralEmptyList(
-                                message = stringResource(R.string.feature_chats_empty_list),
-                                resourceContent = {
-                                    AnimatedContent(
-                                        resId = R.raw.animation_empty_list
-                                    )
-                                }
-                            )
-                        }
+            ChatsListUiState.Error -> {
+                GeneralError(
+                    title = stringResource(R.string.common_generic_error_title),
+                    message = stringResource(R.string.common_generic_error_message),
+                    resourceContent = {
+                        AnimatedContent()
+                    },
+                    actionContent = {
+                        PrimaryButton(
+                            text = stringResource(R.string.common_try_again),
+                            onClick = onTryAgainClick
+                        )
                     }
-                }
-
-                ChatsListUiState.Error -> {
-                    GeneralError(
-                        title = stringResource(R.string.common_generic_error_title),
-                        message = stringResource(R.string.common_generic_error_message),
-                        resourceContent = {
-                            AnimatedContent()
-                        },
-                        actionContent = {
-                            PrimaryButton(
-                                text = stringResource(R.string.common_try_again),
-                                onClick = onTryAgainClick
-                            )
-                        }
-                    )
-                }
+                )
             }
         }
     }
