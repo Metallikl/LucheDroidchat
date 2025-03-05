@@ -3,6 +3,7 @@ package com.dluche.luchedroidchat.navigation
 import android.app.Activity
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -14,6 +15,7 @@ import com.dluche.luchedroidchat.ui.feature.signup.SignUpRoute
 import com.dluche.luchedroidchat.ui.feature.splash.SplashRoute
 import com.dluche.luchedroidchat.ui.feature.users.UsersRoute
 
+@ExperimentalMaterial3Api
 @Composable
 fun ChatNavHost(
     navigationState: LucheDroidChatNavigationState

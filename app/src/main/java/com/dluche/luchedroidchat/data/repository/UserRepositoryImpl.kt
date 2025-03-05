@@ -3,13 +3,14 @@ package com.dluche.luchedroidchat.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.PagingSource
+import com.dluche.luchedroidchat.data.network.NetworkDataSource
+import com.dluche.luchedroidchat.data.pagingsource.UserPagingSource
 import com.dluche.luchedroidchat.model.User
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
-    private val userPagingSource: PagingSource<Int, User>
+    private val networkDataSource: NetworkDataSource
 ) : UserRepository {
     override fun getUsers(limit: Int): Flow<PagingData<User>> {
         return Pager(
@@ -21,7 +22,11 @@ class UserRepositoryImpl @Inject constructor(
                 // Para mudar esse comportamento , basta definir o initialLoadSize com o tamanho do limit
 
             ),
-            pagingSourceFactory = { userPagingSource }
+            pagingSourceFactory = {
+                UserPagingSource(
+                    networkDataSource = networkDataSource
+                )
+            }
         ).flow
     }
 }
