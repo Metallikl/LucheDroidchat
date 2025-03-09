@@ -4,6 +4,7 @@ import com.dluche.luchedroidchat.data.network.model.AuthRequest
 import com.dluche.luchedroidchat.data.network.model.CreateAccountRequest
 import com.dluche.luchedroidchat.data.network.model.ImageResponse
 import com.dluche.luchedroidchat.data.network.model.PaginatedChatResponse
+import com.dluche.luchedroidchat.data.network.model.PaginatedMessageResponse
 import com.dluche.luchedroidchat.data.network.model.PaginatedUserResponse
 import com.dluche.luchedroidchat.data.network.model.PaginationParams
 import com.dluche.luchedroidchat.data.network.model.TokenResponse
@@ -21,4 +22,6 @@ interface NetworkDataSource {
     suspend fun getChats(paginationParams: PaginationParams): PaginatedChatResponse
 
     suspend fun getUser(paginationParams: PaginationParams): PaginatedUserResponse
+
+    suspend fun getMessages(receiverId:Int, paginationParams: PaginationParams): PaginatedMessageResponse
 }

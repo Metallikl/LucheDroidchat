@@ -4,6 +4,7 @@ import com.dluche.luchedroidchat.data.network.model.AuthRequest
 import com.dluche.luchedroidchat.data.network.model.CreateAccountRequest
 import com.dluche.luchedroidchat.data.network.model.ImageResponse
 import com.dluche.luchedroidchat.data.network.model.PaginatedChatResponse
+import com.dluche.luchedroidchat.data.network.model.PaginatedMessageResponse
 import com.dluche.luchedroidchat.data.network.model.PaginatedUserResponse
 import com.dluche.luchedroidchat.data.network.model.PaginationParams
 import com.dluche.luchedroidchat.data.network.model.TokenResponse
@@ -74,6 +75,17 @@ class NetworkDataSourceImpl @Inject constructor(
         }.body()
     }
 
+    override suspend fun getMessages(
+        receiverId: Int,
+        paginationParams: PaginationParams
+    ): PaginatedMessageResponse {
+        return client.get("$MESSAGES_PATH/$receiverId") {
+            url {
+                appendPaginationParams(paginationParams)
+            }
+        }.body()
+    }
+
     private fun URLBuilder.appendPaginationParams(paginationParams: PaginationParams) {
         parameters.append(OFFSET_PARAM, paginationParams.offset)
         parameters.append(LIMIT_PARAM, paginationParams.limit)
@@ -90,5 +102,6 @@ class NetworkDataSourceImpl @Inject constructor(
         const val LIMIT_PARAM = "limit"
         const val CHATS_PATH = "conversations"
         const val USERS_PATH = "users"
+        const val MESSAGES_PATH = "users"
     }
 }
