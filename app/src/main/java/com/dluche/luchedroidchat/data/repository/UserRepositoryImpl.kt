@@ -15,7 +15,9 @@ class UserRepositoryImpl @Inject constructor(
     override fun getUsers(limit: Int): Flow<PagingData<User>> {
         return Pager(
             config = PagingConfig(
+                prefetchDistance = 1,
                 pageSize = limit,
+                initialLoadSize = limit,
                 enablePlaceholders = false,
                 //Por padrão a lib padding3 sempre carrega o valor do limit x3,
                 // pois é o comportamento do valor em initialLoadSize.

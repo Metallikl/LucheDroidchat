@@ -2,8 +2,12 @@ package com.dluche.luchedroidchat.ui.feature.users
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
@@ -65,15 +69,16 @@ fun UsersScreen(pagingUsers: LazyPagingItems<User>) {
         }
     ) {
 
-        when(pagingUsers.loadState.refresh){
+        when (pagingUsers.loadState.refresh) {
             LoadState.Loading -> {
                 CircularProgressIndicator(
                     modifier = Modifier
                         .align(Alignment.Center)
                 )
             }
+
             is LoadState.NotLoading -> {
-                if(pagingUsers.itemCount == 0){
+                if (pagingUsers.itemCount == 0) {
                     GeneralEmptyList(
                         message = stringResource(R.string.feature_users_empty_list),
                         resourceContent = {
@@ -86,6 +91,7 @@ fun UsersScreen(pagingUsers: LazyPagingItems<User>) {
                     ListContent(pagingUsers)
                 }
             }
+
             is LoadState.Error -> GeneralError(
                 title = stringResource(R.string.common_generic_error_title),
                 message = stringResource(R.string.common_generic_error_message),
@@ -126,6 +132,61 @@ private fun ListContent(pagingUsers: LazyPagingItems<User>) {
                 )
             }
         }
+
+        if (pagingUsers.loadState.append is LoadState.Loading
+            && !pagingUsers.loadState.append.endOfPaginationReached
+        ) {
+            item {
+                AppendingLoadingState()
+            }
+        }
+
+        if (pagingUsers.loadState.append is LoadState.Error) {
+            item {
+                AppendingErrorState(pagingUsers)
+            }
+        }
+
+
+    }
+}
+
+@Composable
+private fun AppendingLoadingState() {
+    Box(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator()
+    }
+}
+
+@Composable
+private fun AppendingErrorState(pagingUsers: LazyPagingItems<User>) {
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            stringResource(R.string.feature_users_error_loading_more),
+            modifier = Modifier.padding(vertical = 8.dp),
+            color = MaterialTheme.colorScheme.error
+        )
+
+        PrimaryButton(
+            text = stringResource(R.string.common_try_again),
+            onClick = {
+                pagingUsers.retry()
+            },
+            modifier = Modifier
+                .padding(horizontal = 30.dp)
+                .height(46.dp)
+        )
     }
 }
 
@@ -145,7 +206,7 @@ private fun UsersRouteScreenPreview(
             ),
             //Para simular o preview do paging, adicionar o mock do LoadStates atras da properties sourceLoadState
             //sourceLoadStates = pagingStates //comentado pois sempre fic ano cenario de loading
-            sourceLoadStates =  LoadStates(
+            sourceLoadStates = LoadStates(
                 refresh = LoadState.Error(Throwable()),
                 prepend = LoadState.NotLoading(false),
                 append = LoadState.NotLoading(false)

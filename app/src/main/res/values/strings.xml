@@ -47,5 +47,6 @@
     <string name="common_try_again">Tentar novamente</string>
     <string name="feature_users_title">Usuários</string>
     <string name="feature_users_empty_list">Nenhum usuário disponível para iniciar uma conversa.</string>
+    <string name="feature_users_error_loading_more">Erro ao carregar mais usuários</string>
 
 </resources>
