@@ -10,7 +10,7 @@ import com.dluche.luchedroidchat.data.database.entity.MessageEntity
 @Dao
 interface MessageDao {
     @Query("SELECT * FROM messages WHERE receiver_id = :receiverId ORDER BY timestamp DESC")
-    suspend fun getPagedMessages(receiverId: Int): PagingSource<Int, MessageEntity>
+    fun getPagedMessages(receiverId: Int): PagingSource<Int, MessageEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMessages(messages: List<MessageEntity>)
