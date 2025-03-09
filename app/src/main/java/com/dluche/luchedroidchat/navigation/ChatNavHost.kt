@@ -8,6 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navOptions
+import androidx.navigation.toRoute
+import com.dluche.luchedroidchat.ui.feature.chatdetail.ChatDetailRoute
 import com.dluche.luchedroidchat.ui.feature.chats.ChatsRoute
 import com.dluche.luchedroidchat.ui.feature.chats.navigateToChats
 import com.dluche.luchedroidchat.ui.feature.signin.SignInRoute
@@ -93,7 +95,20 @@ fun ChatNavHost(
         }
 
         composable<Route.UsersRoute> {
-            UsersRoute()
+            UsersRoute(
+                navigateToChatDetail = { userId ->
+                    navController.navigate(Route.ChatDetailRoute(userId))
+                }
+            )
+        }
+
+        composable<Route.ChatDetailRoute> {
+            val chatDetailData = it.toRoute<Route.ChatDetailRoute>()
+            ChatDetailRoute(
+                navigateBack = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }

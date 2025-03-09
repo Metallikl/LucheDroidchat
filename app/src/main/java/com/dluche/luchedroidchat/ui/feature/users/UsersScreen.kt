@@ -1,6 +1,7 @@
 package com.dluche.luchedroidchat.ui.feature.users
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -48,15 +49,19 @@ import kotlinx.coroutines.flow.flowOf
 @ExperimentalMaterial3Api
 @Composable
 fun UsersRoute(
-    viewModel: UsersViewModel = hiltViewModel()
+    viewModel: UsersViewModel = hiltViewModel(),
+    navigateToChatDetail: (userId: Int) -> Unit
 ) {
     val pagingUsers = viewModel.users.collectAsLazyPagingItems()
-    UsersScreen(pagingUsers)
+    UsersScreen(pagingUsers, navigateToChatDetail)
 }
 
 @ExperimentalMaterial3Api
 @Composable
-fun UsersScreen(pagingUsers: LazyPagingItems<User>) {
+fun UsersScreen(
+    pagingUsers: LazyPagingItems<User>,
+    onUserClicked: (userId: Int) -> Unit
+) {
     ChatScaffold(
         topBar = {
             ChatTopAppBar(
@@ -88,7 +93,7 @@ fun UsersScreen(pagingUsers: LazyPagingItems<User>) {
                         }
                     )
                 } else {
-                    ListContent(pagingUsers)
+                    ListContent(pagingUsers,onUserClicked)
                 }
             }
 
@@ -113,7 +118,10 @@ fun UsersScreen(pagingUsers: LazyPagingItems<User>) {
 }
 
 @Composable
-private fun ListContent(pagingUsers: LazyPagingItems<User>) {
+private fun ListContent(
+    pagingUsers: LazyPagingItems<User>,
+    onUserClicked: (Int) -> Unit
+) {
     LazyColumn(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.surface)
@@ -123,7 +131,12 @@ private fun ListContent(pagingUsers: LazyPagingItems<User>) {
     ) {
         items(pagingUsers.itemCount) { index ->
             pagingUsers[index]?.let { user ->
-                UserItem(user)
+                UserItem(
+                    user,
+                    modifier = Modifier.clickable{
+                        onUserClicked(user.id)
+                    }
+                )
             }
             if (index < pagingUsers.itemCount - 1) {
                 HorizontalDivider(
@@ -214,6 +227,9 @@ private fun UsersRouteScreenPreview(
         )
     )
     LucheDroidChatTheme {
-        UsersScreen(usersFlow.collectAsLazyPagingItems())
+        UsersScreen(
+            pagingUsers = usersFlow.collectAsLazyPagingItems(),
+            onUserClicked = {}
+        )
     }
 }
