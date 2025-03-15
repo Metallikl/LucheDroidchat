@@ -11,11 +11,14 @@ import androidx.paging.cachedIn
 import com.dluche.luchedroidchat.data.repository.ChatRepository
 import com.dluche.luchedroidchat.navigation.Route
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.isActive
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ChatDetailViewModel @Inject constructor(
     private val chatRepository: ChatRepository,
@@ -23,7 +26,7 @@ class ChatDetailViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val chatDetailRoute = savedStateHandle.toRoute<Route.ChatDetailRoute>()
-    private var sendMessageJob: Job? = null
+    val sendMessageFlow = MutableSharedFlow<Unit>()
 
     var messageText by mutableStateOf("")
         private set
@@ -32,24 +35,40 @@ class ChatDetailViewModel @Inject constructor(
         chatDetailRoute.userId
     ).cachedIn(viewModelScope)
 
-    fun dispatchEvent(event: ChatDetailsEvents) {
-        when (event) {
-            is ChatDetailsEvents.OnMessageChange -> updateMessage(event.message)
-            ChatDetailsEvents.OnSendMessage -> sendMessage()
+    init {
+        viewModelScope.launch {
+            //Utilizando mapLatest e flaMapLastest do flow, automaticamente é cancelado
+            // a coroutine atual, funcionando como o job cancel()
+            sendMessageFlow.mapLatest {
+                sendMessage()
+            }.collect()
+
         }
     }
 
-    private fun updateMessage(message: String){
+    fun dispatchEvent(event: ChatDetailsEvents) {
+        when (event) {
+            is ChatDetailsEvents.OnMessageChange -> updateMessage(event.message)
+            ChatDetailsEvents.OnSendMessage -> sendMessageFlow()
+        }
+    }
+
+    private fun updateMessage(message: String) {
         messageText = message
     }
 
     private fun sendMessage() {
-        sendMessageJob?.cancel()
-        sendMessageJob =  viewModelScope.launch {
+        viewModelScope.launch {
             chatRepository.sendMessage(
                 receiverId = chatDetailRoute.userId,
                 text = messageText
             )
+        }
+    }
+
+    private fun sendMessageFlow() {
+        viewModelScope.launch {
+            sendMessageFlow.emit(Unit)
         }
     }
 }
