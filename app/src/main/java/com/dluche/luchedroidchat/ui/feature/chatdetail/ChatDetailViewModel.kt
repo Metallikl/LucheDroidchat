@@ -11,6 +11,8 @@ import androidx.paging.cachedIn
 import com.dluche.luchedroidchat.data.repository.ChatRepository
 import com.dluche.luchedroidchat.navigation.Route
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,6 +23,7 @@ class ChatDetailViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val chatDetailRoute = savedStateHandle.toRoute<Route.ChatDetailRoute>()
+    private var sendMessageJob: Job? = null
 
     var messageText by mutableStateOf("")
         private set
@@ -41,7 +44,8 @@ class ChatDetailViewModel @Inject constructor(
     }
 
     private fun sendMessage() {
-        viewModelScope.launch {
+        sendMessageJob?.cancel()
+        sendMessageJob =  viewModelScope.launch {
             chatRepository.sendMessage(
                 receiverId = chatDetailRoute.userId,
                 text = messageText
