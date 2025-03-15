@@ -11,7 +11,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-interface DatabaseDataSource {
+interface DatabaseDataSourceModule {
 
     @Binds
     @Singleton
