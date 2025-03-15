@@ -20,11 +20,12 @@ class ChatDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    val chatDetailRoute = savedStateHandle.toRoute<Route.ChatDetailRoute>()
+    private val chatDetailRoute = savedStateHandle.toRoute<Route.ChatDetailRoute>()
 
-    private var messageText by mutableStateOf("")
+    var messageText by mutableStateOf("")
+        private set
 
-    private val pagingChatMessage = chatRepository.getPagedMessages(
+    val pagingChatMessage = chatRepository.getPagedMessages(
         chatDetailRoute.userId
     ).cachedIn(viewModelScope)
 

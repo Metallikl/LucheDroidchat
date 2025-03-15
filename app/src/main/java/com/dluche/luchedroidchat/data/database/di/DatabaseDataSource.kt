@@ -1,5 +1,6 @@
 package com.dluche.luchedroidchat.data.database.di
 
+import com.dluche.luchedroidchat.data.database.DatabaseDataSource
 import com.dluche.luchedroidchat.data.database.DatabaseDataSourceImpl
 import dagger.Binds
 import dagger.Module

@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.LoadStates
 import androidx.paging.PagingData
@@ -51,30 +52,17 @@ import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun ChatDetailRoute(
+    viewModel: ChatDetailViewModel = hiltViewModel(),
     navigateBack: () -> Unit
 ) {
-    val pagingChatMessages = flowOf(
-        PagingData.from(
-            listOf(
-                chatMessage5,
-                chatMessage4,
-                chatMessage3,
-                chatMessage2,
-                chatMessage1
-            ),
-            sourceLoadStates = LoadStates(
-                refresh = LoadState.NotLoading(false),
-                prepend = LoadState.NotLoading(false),
-                append = LoadState.NotLoading(false)
-            )
-        )
-    ).collectAsLazyPagingItems()
+    val pagingChatMessages = viewModel.pagingChatMessage.collectAsLazyPagingItems()
+    val messageText = viewModel.messageText
 
     ChatDetailScreen(
         pagingChatMessages = pagingChatMessages,
-        messageText = "",
-        onMessageChange = {},
-        onSendClicked = {},
+        messageText = messageText,
+        onMessageChange = viewModel::dispatchEvent,
+        onSendClicked = viewModel::dispatchEvent,
         onNavigationClicked = navigateBack
     )
 }
@@ -84,8 +72,8 @@ fun ChatDetailRoute(
 fun ChatDetailScreen(
     pagingChatMessages: LazyPagingItems<ChatMessage>,
     messageText: String,
-    onMessageChange: (String) -> Unit,
-    onSendClicked: () -> Unit,
+    onMessageChange: (ChatDetailsEvents) -> Unit,
+    onSendClicked: (ChatDetailsEvents) -> Unit,
     onNavigationClicked: () -> Unit
 ) {
     ChatScaffold(
@@ -189,8 +177,12 @@ fun ChatDetailScreen(
             }
             ChatMessageTextField(
                 value = messageText,
-                onInputChange = onMessageChange,
-                onSendClicked = onSendClicked,
+                onInputChange = {
+                    onMessageChange(ChatDetailsEvents.OnMessageChange(it))
+                },
+                onSendClicked = {
+                    onSendClicked(ChatDetailsEvents.OnSendMessage)
+                },
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .padding(bottom = 16.dp, top = 8.dp),
